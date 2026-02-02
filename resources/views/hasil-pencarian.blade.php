@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<section class="pt-32 pb-20 bg-white italic font-sans">
+<section class="pt-32 pb-20 bg-white italic font-sans" data-aos="fade-up" data-aos-delay="100">
     <div class="container mx-auto px-6">
         <div class="flex justify-between items-start mb-12">
             <a href="javascript:history.back()" class="flex items-center gap-2 text-slate-600 font-bold hover:text-[#0095FF] transition">

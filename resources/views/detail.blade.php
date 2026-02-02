@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="bg-[#F8FAFC] min-h-screen pt-28 pb-20 font-sans italic">
+<div class="bg-[#F8FAFC] min-h-screen pt-28 pb-20 font-sans italic" data-aos="fade-up" data-aos-delay="100">
     <div class="container mx-auto px-6">
         
         <div class="flex justify-between items-center mb-8">
@@ -21,7 +21,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <div class="lg:col-span-2 space-y-10">
                 
-                <div x-data="{ activeImg: 0, images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267', 'https://images.unsplash.com/photo-1555854817-40e09806a491', 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60'] }">
+                <div x-data="{ activeImg: 0, images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267', 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267', 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60'] }">
                     <div class="relative h-[500px] rounded-[40px] overflow-hidden mb-6 shadow-xl">
                         <img :src="images[activeImg]" class="w-full h-full object-cover transition-all duration-500">
                         <button @click="activeImg = activeImg > 0 ? activeImg - 1 : images.length - 1" class="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg"><i data-lucide="chevron-left"></i></button>

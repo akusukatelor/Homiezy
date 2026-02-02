@@ -29,7 +29,7 @@
         </div>
     </section>
 
-    <section class="py-32 bg-white">
+    <section class="py-32 bg-white" data-aos="fade-up" data-aos-delay="100">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-5xl font-black mb-4 tracking-tight italic">Mengapa Bergabung?</h2>
             <p class="text-slate-400 text-xl mb-24 font-medium italic">Ratusan mitra sudah merasakan manfaatnya</p>
@@ -53,7 +53,7 @@
         </div>
     </section>
 
-    <section class="py-32 bg-[#F8FAFC]">
+    <section class="py-32 bg-[#F8FAFC]" data-aos="fade-up" data-aos-delay="100">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-5xl font-black mb-4 tracking-tighter italic">Cara Bergabung</h2>
             <p class="text-slate-400 text-xl mb-24 font-medium italic">Mudah dan cepat, hanya 3 langkah</p>
@@ -82,7 +82,7 @@
         </div>
     </section>
 
-    <section class="py-32 bg-white">
+    <section class="py-32 bg-white" data-aos="fade-up" data-aos-delay="100">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-5xl font-black mb-24 italic">Kata Mitra Kami</h2>
             

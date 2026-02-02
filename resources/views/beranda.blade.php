@@ -43,7 +43,7 @@
     </div>
 </section>
 
-<section class="py-32 bg-white">
+<section class="py-32 bg-white" data-aos="fade-up" data-aos-delay="100">
     <div class="container mx-auto px-6 text-center">
         <h2 class="text-5xl font-black mb-8 tracking-tight">Mengapa Homiezy?</h2>
         <p class="text-slate-500 text-xl max-w-3xl mx-auto mb-24 leading-relaxed">Karena kuliah udah cukup bikin pusing. Urusan tempat tinggal, makan, dan laundry biar kami yang bantu!</p>
@@ -61,7 +61,7 @@
     </div>
 </section>
 
-<section class="py-32 bg-[#F8FAFC]">
+<section class="py-32 bg-[#F8FAFC]" data-aos="fade-up" data-aos-delay="100">
     <div class="container mx-auto px-6">
         <div class="text-center mb-20">
             <span class="bg-[#0095FF] text-white px-8 py-2 rounded-full text-xs font-black shadow-lg shadow-blue-200 uppercase tracking-widest">⚡ Penawaran Terbaik</span>
@@ -119,7 +119,7 @@
     </div>
 </section>
 
-<section class="py-20 md:py-32 bg-white" x-data="{ showAll: false }">
+<section class="py-20 md:py-32 bg-white" x-data="{ showAll: false }" data-aos="fade-up" data-aos-delay="100">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-16 md:mb-24 relative">
             <span class="bg-[#0095FF] text-white px-6 py-2 rounded-full text-[10px] font-black shadow-lg uppercase tracking-widest">📈 Rekomendasi Pintar</span>
@@ -187,7 +187,7 @@
     </div>
 </section>
 
-<section class="py-32 bg-[#F8FAFC]">
+<section class="py-32 bg-[#F8FAFC]" data-aos="fade-up" data-aos-delay="100">
     <div class="container mx-auto px-6 text-center">
         <h2 class="text-6xl font-black mb-10 tracking-tighter">Kata Mereka Tentang Homiezy</h2>
         <p class="text-slate-400 text-2xl mb-24 max-w-4xl mx-auto font-medium">Sudah 10,000+ mahasiswa mempercayai Homiezy untuk kebutuhan hidup mereka</p>
