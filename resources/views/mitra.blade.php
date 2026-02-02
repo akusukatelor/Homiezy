@@ -109,7 +109,7 @@
             
             <div class="bg-[#0095FF] rounded-[60px] p-20 text-white relative overflow-hidden italic shadow-2xl">
                 <div class="relative z-10">
-                    <h3 class="text-5xl font-black mb-6 italic">Siap Mengembangkan Bisnis Anda?</h3>
+                    <h3 class="text-3xl font-black mb-6 italic">Siap Mengembangkan Bisnis Anda?</h3>
                     <p class="text-xl opacity-90 mb-12 italic">Bergabunglah dengan 500+ mitra yang sudah sukses meningkatkan omset mereka</p>
                     <button class="bg-white text-[#0095FF] px-12 py-5 rounded-2xl font-black text-xl hover:bg-blue-50 transition shadow-xl italic flex items-center gap-3 mx-auto">
                         <i data-lucide="check-circle" class="w-6 h-6"></i> Daftar Gratis Sekarang
