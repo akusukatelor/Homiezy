@@ -41,10 +41,12 @@
                 <i data-lucide="home" class="w-4 h-4"></i> Beranda
             </a>
 
+            @auth
             <a href="{{ route('dashboard') }}" 
                class="{{ request()->routeIs('dashboard') ? 'bg-[#0095FF] text-white shadow-lg shadow-blue-200' : 'text-slate-600 hover:text-[#0095FF]' }} px-6 py-2.5 rounded-full font-semibold text-sm flex items-center gap-2 transition transform hover:scale-105">
                 <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard Saya
             </a>
+            @endauth
 
             <a href="{{ route('mitra') }}" 
                class="{{ request()->routeIs('mitra') ? 'bg-[#0095FF] text-white shadow-lg shadow-blue-200' : 'text-slate-600 hover:text-[#0095FF]' }} px-6 py-2.5 rounded-full font-semibold text-sm flex items-center gap-2 transition transform hover:scale-105">
@@ -54,8 +56,20 @@
 
         <div class="flex items-center gap-4 relative z-[70]">
             <div class="hidden md:flex items-center gap-6">
-                <a href="#" class="text-slate-600 font-bold text-sm hover:text-[#0095FF]">Masuk</a>
-                <a href="#" class="bg-[#0095FF] text-white px-8 py-2.5 rounded-full font-bold text-sm hover:bg-blue-600 transition shadow-lg shadow-blue-200">Daftar</a>
+               @guest
+                    <a href="{{ route('login') }}" class="text-slate-600 font-bold text-sm hover:text-[#0095FF] transition">Masuk</a>
+                    <a href="{{ route('register') }}" class="bg-[#0095FF] text-white px-8 py-2.5 rounded-full font-bold text-sm hover:bg-blue-600 transition shadow-lg shadow-blue-200">Daftar</a>
+                @endguest
+
+                @auth
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs font-black text-slate-400 uppercase tracking-widest italic">Halo, {{ Auth::user()->name }}!</span>
+                        <form action="{{ route('logout') }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="text-red-500 font-black text-xs uppercase hover:underline">Keluar</button>
+                        </form>
+                    </div>
+                @endauth
             </div>
 
             <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-slate-600 hover:text-[#0095FF] transition">
@@ -80,10 +94,11 @@
                class="flex items-center gap-4 p-4 rounded-2xl {{ request()->routeIs('home') ? 'bg-blue-50 text-[#0095FF]' : 'text-slate-600' }} font-bold text-lg italic">
                 <i data-lucide="home"></i> Beranda
             </a>
-            <a href="{{ route('dashboard') }}" @click="mobileMenuOpen = false"
-               class="flex items-center gap-4 p-4 rounded-2xl {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-[#0095FF]' : 'text-slate-600' }} font-bold text-lg italic">
+            @auth
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-4 p-4 rounded-2xl {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-[#0095FF]' : 'text-slate-600' }} font-bold text-lg italic">
                 <i data-lucide="layout-dashboard"></i> Dashboard Saya
             </a>
+            @endauth
             <a href="{{ route('mitra') }}" @click="mobileMenuOpen = false"
                class="flex items-center gap-4 p-4 rounded-2xl {{ request()->routeIs('mitra') ? 'bg-blue-50 text-[#0095FF]' : 'text-slate-600' }} font-bold text-lg italic">
                 <i data-lucide="building-2"></i> Jadi Mitra
@@ -92,8 +107,17 @@
             <hr class="border-slate-100 my-2">
 
             <div class="grid grid-cols-2 gap-4">
-                <a href="#" class="flex items-center justify-center py-4 rounded-2xl border-2 border-slate-100 font-bold text-slate-600">Masuk</a>
-                <a href="#" class="flex items-center justify-center py-4 rounded-2xl bg-[#0095FF] text-white font-bold shadow-lg shadow-blue-100">Daftar</a>
+                @guest
+                    <a href="{{ route('login') }}" class="text-center py-4 rounded-2xl border-2 border-slate-100 font-bold text-slate-600">Masuk</a>
+                    <a href="{{ route('register') }}" class="text-center py-4 rounded-2xl bg-[#0095FF] text-white font-bold shadow-lg shadow-blue-100">Daftar</a>
+                @endguest
+
+                @auth
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full py-4 rounded-2xl bg-red-50 text-red-500 font-bold italic">Keluar Akun</button>
+                    </form>
+                @endauth
             </div>
         </div>
     </div>
@@ -140,8 +164,8 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
      <script>
     AOS.init({
-        duration: 1000, // Durasi animasi dalam milidetik
-        once: true,     // Animasi hanya berjalan sekali saat di-scroll
+        duration: 1000, 
+        once: true,     
     });
     </script>
 </body>

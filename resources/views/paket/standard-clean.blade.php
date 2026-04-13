@@ -79,14 +79,37 @@
         discountRate: 0.15,
 
        handleNext() {
-            if (this.step === 2 && this.kos) {
-                this.step = 4; // Lompat Katering (3) langsung ke Laundry (4)
-            } else if (this.step === 4 && this.laundry) {
-                this.step = 5; // Lanjut ke Review
-            } else if (this.step === 5) {
-                this.showSuccessModal = true;
+    if (this.step === 2 && this.kos) {
+        this.step = 4; // Lompat Katering langsung ke Laundry
+    } else if (this.step === 4 && this.laundry) {
+        this.step = 5; // Lanjut ke Review
+    } else if (this.step === 5) {
+        fetch('{{ route("checkout.store") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Penting agar tidak error 419
+            },
+            body: JSON.stringify({
+                name: 'Paket Standard Clean - ' + this.kos.name,
+                price: this.total,
+                type: 'paket' // Agar masuk ke kategori paket di dashboard
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                this.showSuccessModal = true; // Munculkan modal sukses jika berhasil simpan
+            } else {
+                alert('Gagal menyimpan pesanan.');
             }
-        },
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan koneksi.');
+        });
+    }
+},
 
         // Logic Filter
         get filteredKos() {

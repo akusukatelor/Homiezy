@@ -12,24 +12,28 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
             <div class="bg-[#0095FF] p-8 rounded-[32px] text-white shadow-xl shadow-blue-200">
                 <p class="text-sm font-medium opacity-80 mb-6">Total Pengeluaran Bulan Ini</p>
-                <h3 class="text-3xl font-bold mb-4">Rp1.800.000</h3>
+                <h3 class="text-3xl font-bold mb-4">Rp{{ number_format($stats['total'], 0, ',', '.') }}</h3>
                 <p class="text-xs font-medium flex items-center gap-2">
-                    <i data-lucide="trending-down" class="w-4 h-4"></i> 5% lebih hemat dari bulan lalu
+                    <i data-lucide="trending-down" class="w-4 h-4"></i> Real-time data database
                 </p>
             </div>
 
-            @foreach([
-                ['label' => 'Kos', 'price' => '1.200.000', 'icon' => 'home'],
-                ['label' => 'Katering', 'price' => '450.000', 'icon' => 'utensils'],
-                ['label' => 'Laundry', 'price' => '150.000', 'icon' => 'shirt']
-            ] as $card)
+            @php
+                $categories = [
+                    ['label' => 'Kos', 'key' => 'kos', 'icon' => 'home'],
+                    ['label' => 'Katering', 'key' => 'katering', 'icon' => 'utensils'],
+                    ['label' => 'Laundry', 'key' => 'laundry', 'icon' => 'shirt']
+                ];
+            @endphp
+
+            @foreach($categories as $cat)
             <div class="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
                 <div class="flex items-center gap-3 mb-6 text-[#0095FF]">
-                    <i data-lucide="{{ $card['icon'] }}" class="w-5 h-5"></i>
-                    <span class="font-bold text-slate-800">{{ $card['label'] }}</span>
+                    <i data-lucide="{{ $cat['icon'] }}" class="w-5 h-5"></i>
+                    <span class="font-bold text-slate-800">{{ $cat['label'] }}</span>
                 </div>
-                <h3 class="text-2xl font-bold text-slate-900 mb-1">Rp{{ $card['price'] }}</h3>
-                <p class="text-xs text-slate-400 font-medium italic">per bulan</p>
+                <h3 class="text-2xl font-bold text-slate-900 mb-1">Rp{{ number_format($stats[$cat['key']], 0, ',', '.') }}</h3>
+                <p class="text-xs text-slate-400 font-medium italic">pengeluaran aktif</p>
             </div>
             @endforeach
         </div>
@@ -69,99 +73,115 @@
                 </div>
                 
                 <div class="space-y-6">
-                    @foreach([
-                        ['id' => 'ORD001', 'name' => 'QuickWash Express - Cuci Setrika', 'status' => 'Diproses', 'date' => '2 Des 2025', 'price' => '45.000', 'color' => 'blue', 'desc' => 'Sedang dicuci, estimasi selesai 2 jam lagi'],
-                        ['id' => 'ORD002', 'name' => 'Dapur Mama Rina - Paket Harian', 'status' => 'Diantar', 'date' => '2 Des 2025', 'price' => '25.000', 'color' => 'green', 'desc' => 'Makanan sudah diantar'],
-                        ['id' => 'ORD003', 'name' => 'QuickWash Express - Express 3 Jam', 'status' => 'Selesai', 'date' => '1 Des 2025', 'price' => '60.000', 'color' => 'emerald', 'desc' => 'Sudah diambil']
-                    ] as $order)
+                    @forelse($orders as $order)
                     <div class="p-6 rounded-3xl border border-slate-50 bg-slate-50/30">
                         <div class="flex justify-between items-start mb-4">
                             <div class="flex gap-4">
-                                <i data-lucide="{{ str_contains($order['name'], 'Quick') ? 'shirt' : 'utensils' }}" class="w-5 h-5 text-slate-500"></i>
+                                <i data-lucide="{{ $order->type == 'laundry' ? 'shirt' : 'utensils' }}" class="w-5 h-5 text-slate-500"></i>
                                 <div>
-                                    <p class="text-xs text-slate-400 font-bold mb-1">{{ $order['id'] }}</p>
-                                    <h5 class="font-bold text-sm text-slate-800">{{ $order['name'] }}</h5>
+                                    <p class="text-xs text-slate-400 font-bold mb-1">{{ $order->order_number }}</p>
+                                    <h5 class="font-bold text-sm text-slate-800">{{ $order->name }}</h5>
                                 </div>
                             </div>
-                            <span class="px-4 py-1 rounded-full text-[10px] font-black {{ $order['color'] == 'blue' ? 'bg-blue-100 text-blue-600' : ($order['color'] == 'green' ? 'bg-green-100 text-green-600' : 'bg-emerald-100 text-emerald-600') }}">
-                                {{ $order['status'] }}
+                            <span class="px-4 py-1 rounded-full text-[10px] font-black 
+                                {{ $order->status == 'Diproses' ? 'bg-blue-100 text-blue-600' : 'bg-emerald-100 text-emerald-600' }}">
+                                {{ $order->status }}
                             </span>
                         </div>
-                        <p class="text-xs text-slate-400 flex items-center gap-2 mb-3 italic"><i data-lucide="clock" class="w-3 h-3"></i> {{ $order['date'] }}</p>
-                        <p class="text-xs text-blue-500 font-bold mb-4 italic">{{ $order['desc'] }}</p>
+                        <p class="text-xs text-slate-400 flex items-center gap-2 mb-3 italic">
+                            <i data-lucide="clock" class="w-3 h-3"></i> {{ $order->created_at->format('d M Y') }}
+                        </p>
                         <div class="flex justify-between items-center pt-4 border-t border-slate-100">
                             <span class="text-xs text-slate-400 font-bold">Total:</span>
-                            <span class="font-black text-slate-800">Rp{{ $order['price'] }}</span>
+                            <span class="font-black text-slate-800">Rp{{ number_format($order->price, 0, ',', '.') }}</span>
                         </div>
                     </div>
-                    @endforeach
+                    @empty
+                    <p class="text-center text-slate-400 py-10">Belum ada pesanan.</p>
+                    @endforelse
                 </div>
             </div>
 
             <div class="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm">
-                <div class="flex justify-between items-center mb-10">
-                    <h4 class="font-bold text-xl">Langganan Aktif</h4>
-                    <button class="text-xs font-bold border border-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 transition">Kelola Semua</button>
-                </div>
+    <div class="flex justify-between items-center mb-10">
+        <h4 class="font-bold text-xl">Langganan Aktif</h4>
+        <button class="text-xs font-bold border border-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 transition">Kelola Semua</button>
+    </div>
 
-                <div class="p-8 rounded-[32px] border border-slate-100 bg-white shadow-sm italic">
-                    <div class="flex gap-4 mb-6">
-                        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-[#0095FF]">
-                            <i data-lucide="home" class="w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h5 class="font-bold text-slate-800">Paket Standard Meal - Kos Putri Mawar</h5>
-                            <p class="text-[#0095FF] font-black text-xl">Rp1.650.000<span class="text-xs font-medium">/bulan</span></p>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-4 mb-8">
-                        <div class="flex justify-between text-xs italic font-medium">
-                            <span class="text-slate-400">Mulai:</span>
-                            <span class="text-slate-800 font-bold">1 Jan 2025</span>
-                        </div>
-                        <div class="flex justify-between text-xs italic font-medium">
-                            <span class="text-slate-400">Tagihan berikutnya:</span>
-                            <span class="text-slate-800 font-bold">1 Jan 2026</span>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center pt-6 border-t border-slate-50">
-                        <div class="flex items-center gap-2 text-green-500 font-bold text-xs">
-                            <i data-lucide="check-circle" class="w-4 h-4"></i> Auto-renewal aktif
-                        </div>
-                        <button class="text-slate-400 font-bold text-xs hover:text-slate-600 transition">Edit</button>
-                    </div>
-                </div>
+    @if($activeSub)
+    <div class="p-8 rounded-[32px] border border-slate-100 bg-white shadow-sm italic">
+        <div class="flex gap-4 mb-6">
+            <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-[#0095FF]">
+                <i data-lucide="{{ $activeSub->type == 'kos' ? 'home' : 'package' }}" class="w-6 h-6"></i>
             </div>
+            <div>
+                <h5 class="font-bold text-slate-800">{{ $activeSub->name }}</h5>
+                <p class="text-[#0095FF] font-black text-xl">Rp{{ number_format($activeSub->price, 0, ',', '.') }}<span class="text-xs font-medium">/bulan</span></p>
+            </div>
+        </div>
+        
+        <div class="space-y-4 mb-8">
+            <div class="flex justify-between text-xs italic font-medium">
+                <span class="text-slate-400">Mulai:</span>
+                <span class="text-slate-800 font-bold">{{ $activeSub->created_at->format('d M Y') }}</span>
+            </div>
+            <div class="flex justify-between text-xs italic font-medium">
+                <span class="text-slate-400">Tagihan berikutnya:</span>
+                {{-- Kita asumsikan tagihan muncul 30 hari setelah created_at --}}
+                <span class="text-slate-800 font-bold">{{ $activeSub->created_at->addDays(30)->format('d M Y') }}</span>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-6 border-t border-slate-50">
+            <div class="flex items-center gap-2 text-green-500 font-bold text-xs">
+                <i data-lucide="check-circle" class="w-4 h-4"></i> Auto-renewal aktif
+            </div>
+            <button class="text-slate-400 font-bold text-xs hover:text-slate-600 transition">Edit</button>
+        </div>
+    </div>
+    @else
+    <div class="p-10 text-center border-2 border-dashed border-slate-100 rounded-[32px]">
+        <p class="text-slate-400 text-sm font-medium">Kamu belum memiliki langganan aktif.</p>
+        <a href="{{ route('home') }}" class="text-[#0095FF] font-black text-xs mt-4 inline-block underline">Cari Kos Sekarang</a>
+    </div>
+    @endif
+</div>
         </div>
 
     </div>
 </div>
 
 <script>
-    // Inisialisasi Grafik Batang (Gambar 1)
+    // Data dari Controller
+    const months = @json($chartMonths);
+    const chartData = @json($chartData);
+
+    // Bar Chart
     const ctxBar = document.getElementById('barChart').getContext('2d');
     new Chart(ctxBar, {
         type: 'bar',
         data: {
-            labels: ['Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+            labels: months,
             datasets: [
-                { label: 'Katering', data: [450000, 480000, 450000, 500000, 450000, 450000], backgroundColor: '#0061AF', borderRadius: 8 },
-                { label: 'Kos', data: [1200000, 1200000, 1200000, 1200000, 1200000, 1200000], backgroundColor: '#0095FF', borderRadius: 8 },
-                { label: 'Laundry', data: [150000, 120000, 150000, 140000, 150000, 150000], backgroundColor: '#0F172A', borderRadius: 8 }
+                { label: 'Katering', data: chartData.katering, backgroundColor: '#0061AF', borderRadius: 8 },
+                { label: 'Kos', data: chartData.kos, backgroundColor: '#0095FF', borderRadius: 8 },
+                { label: 'Laundry', data: chartData.laundry, backgroundColor: '#0F172A', borderRadius: 8 }
             ]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true } } }
+        options: { responsive: true, maintainAspectRatio: false }
     });
 
-    // Inisialisasi Grafik Lingkaran (Gambar 1)
+    // Pie Chart
     const ctxPie = document.getElementById('pieChart').getContext('2d');
     new Chart(ctxPie, {
         type: 'doughnut',
         data: {
             labels: ['Kos', 'Katering', 'Laundry'],
-            datasets: [{ data: [67, 25, 8], backgroundColor: ['#0095FF', '#0061AF', '#0F172A'], borderWidth: 0 }]
+            datasets: [{ 
+                data: [{{ $stats['kos'] }}, {{ $stats['katering'] }}, {{ $stats['laundry'] }}], 
+                backgroundColor: ['#0095FF', '#0061AF', '#0F172A'], 
+                borderWidth: 0 
+            }]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '70%' }
     });

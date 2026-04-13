@@ -93,7 +93,34 @@
                     this.step = 5; // Loncat ke Review
                 }
             } else if (this.step === 5) {
-                this.showSuccessModal = true; // Munculkan Modal
+               this.saveOrder();
+            }
+        },
+
+        async saveOrder() {
+            this.isSaving = true;
+            try {
+                const response = await fetch('{{ route('checkout.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        name: 'Paket Basic - ' + this.kos.name,
+                        price: this.total,
+                        type: 'paket'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    this.showSuccessModal = true;
+                }
+            } catch (error) {
+                alert('Terjadi kesalahan saat menyimpan pesanan.');
+                console.error(error);
+            } finally {
+                this.isSaving = false;
             }
         },
 

@@ -82,9 +82,37 @@
             if (this.step < 5) {
                 this.step++;
             } else {
-                this.showSuccessModal = true;
+                this.saveOrder();
             }
         },
+
+        async saveOrder() {
+            this.isSaving = true;
+            try {
+                const response = await fetch('{{ route('checkout.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        name: 'Paket Premium - ' + this.kos.name,
+                        price: this.total,
+                        type: 'paket'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    this.showSuccessModal = true;
+                }
+            } catch (error) {
+                alert('Terjadi kesalahan saat menyimpan pesanan.');
+                console.error(error);
+            } finally {
+                this.isSaving = false;
+            }
+        },
+
 
         // Logic Filter
         get filteredKos() {
