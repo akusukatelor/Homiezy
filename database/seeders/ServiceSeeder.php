@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Service;
+use App\Models\User; // Tambahkan ini
 use Illuminate\Database\Seeder;
 
 class ServiceSeeder extends Seeder
@@ -13,7 +13,18 @@ class ServiceSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. DATA KOS
+        // 1. BUAT ATAU AMBIL USER DULU (Sebagai pemilik layanan)
+        // Kita gunakan updateOrCreate agar tidak duplikat jika seeder dijalankan ulang
+        $user = User::updateOrCreate(
+            ['email' => 'alfin@example.com'],
+            [
+                'name' => 'Alfin Ilham',
+                'password' => bcrypt('password'),
+                'whatsapp' => '08123456789'
+            ]
+        );
+
+        // 2. DATA KOS
         $kos = [
             [
                 'name' => 'Kos Putri Mawar Residence',
@@ -56,11 +67,11 @@ class ServiceSeeder extends Seeder
             ],
         ];
 
-        // 2. DATA KATERING
+        // 3. DATA KATERING
         $catering = [
             [
                 'name' => 'Paket Katering Ekonomis',
-                'type' => 'catering',
+                'type' => 'katering', // Sesuaikan dengan tipe di migration
                 'price' => 450000,
                 'subtitle' => 'Makan siang & malam untuk hari kerja',
                 'frequency' => '2x Makan',
@@ -73,7 +84,7 @@ class ServiceSeeder extends Seeder
             ],
             [
                 'name' => 'Paket Katering Premium',
-                'type' => 'catering',
+                'type' => 'katering',
                 'price' => 850000,
                 'subtitle' => 'Makan 3x sehari setiap hari',
                 'frequency' => '3x Makan',
@@ -86,7 +97,7 @@ class ServiceSeeder extends Seeder
             ],
         ];
 
-        // 3. DATA LAUNDRY
+        // 4. DATA LAUNDRY
         $laundry = [
             [
                 'name' => 'Paket Laundry Hemat',
@@ -112,7 +123,12 @@ class ServiceSeeder extends Seeder
             ],
         ];
 
+        // 5. LOOPING UNTUK INSERT KE DATABASE
         foreach (array_merge($kos, $catering, $laundry) as $data) {
+            // TAMBAHKAN user_id DAN whatsapp SECARA OTOMATIS
+            $data['user_id'] = $user->id;
+            $data['whatsapp'] = $user->whatsapp;
+            
             Service::create($data);
         }
     }

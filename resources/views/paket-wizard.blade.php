@@ -1,5 +1,8 @@
 <div class="bg-[#F8FAFC] min-h-screen pt-32 pb-20 font-sans italic" 
-     x-data="{ 
+     x-data="{
+        kosItems: @json($kosItems),
+        cateringItems: @json($cateringItems),
+        laundryItems: @json($laundryItems), 
         currentPackage: '{{ $type }}', // 'basic', 'standard-clean', dst
         step: 2, 
         kos: null, catering: null, laundry: null,

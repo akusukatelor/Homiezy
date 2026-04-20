@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="min-h-screen flex items-center justify-center bg-[#F8FAFC] pt-20">
-    <div class="max-w-md w-full bg-white p-10 rounded-[40px] shadow-2xl shadow-blue-100 border border-slate-50 italic">
+    <div class="max-w-md w-full bg-white p-10 rounded-[40px] shadow-2xl shadow-blue-100 border border-slate-50">
         <div class="text-center mb-8">
             <h2 class="text-3xl font-black text-slate-800 mb-2">Sedikit Lagi! 🚀</h2>
             <p class="text-slate-400 font-bold text-sm">Lengkapi nomor WhatsApp kamu untuk memudahkan koordinasi layanan.</p>

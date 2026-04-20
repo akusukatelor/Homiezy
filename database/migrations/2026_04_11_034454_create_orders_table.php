@@ -17,8 +17,8 @@ return new class extends Migration
         $table->string('name');
         $table->string('status');
         $table->integer('price');
-        $table->string('type'); // kos, katering, laundry
-        $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Relasi ke tabel users
+        $table->string('type'); 
+        $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
         $table->timestamps();
     });
 }

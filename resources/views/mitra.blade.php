@@ -21,7 +21,7 @@
             </p>
             
             <div class="flex flex-col items-center gap-4">
-                <a href="#" class="bg-white text-[#0095FF] px-12 py-5 rounded-2xl font-black text-xl shadow-2xl hover:bg-blue-50 transition transform hover:scale-105">
+                <a href="{{ route('partner.register') }}" class="bg-white text-[#0095FF] px-12 py-5 rounded-2xl font-black text-xl shadow-2xl hover:bg-blue-50 transition transform hover:scale-105">
                     Daftar Sebagai Mitra
                 </a>
                 <p class="text-sm font-bold tracking-wide">Gratis untuk 100 mitra pertama! 🎉</p>
@@ -111,9 +111,9 @@
                 <div class="relative z-10">
                     <h3 class="text-4xl font-black mb-6 ">Siap Kembangkan Bisnis Anda?</h3>
                     <p class="text-xl opacity-90 mb-12 ">Bergabunglah dengan 500+ mitra yang sudah sukses meningkatkan omset mereka</p>
-                    <button class="bg-white text-[#0095FF] px-12 py-5 rounded-2xl font-black text-xl hover:bg-blue-50 transition shadow-xl  flex items-center gap-3 mx-auto">
-                        <i data-lucide="check-circle" class="w-6 h-6"></i> Daftar Gratis Sekarang
-                    </button>
+                    <a href="{{ route('partner.register') }}" class="bg-white text-[#0095FF] px-12 py-5 rounded-2xl font-black text-xl shadow-2xl hover:bg-blue-50 transition transform hover:scale-105">
+                        Daftar Sebagai Mitra
+                    </a>
                 </div>
             </div>
         </div>

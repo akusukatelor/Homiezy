@@ -12,28 +12,31 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
         $user_id = $user->id;
-        $monthOrders = Order::where('user_id', $user_id)
-                            ->whereMonth('created_at', Carbon::now()->month)
-                            ->get();
+        $allOrders = Order::where('user_id', $user_id)->get();
 
-        $stats = [
-            'total' => $monthOrders->sum('price'),
-            'kos' => $monthOrders->where('type', 'kos')->sum('price'),
-            'katering' => $monthOrders->where('type', 'katering')->sum('price'),
-            'laundry' => $monthOrders->where('type', 'laundry')->sum('price'),
-        ];
+       $stats = [
+        'kos'      => (int) $allOrders->sum('kos_price'),
+        'katering' => (int) $allOrders->sum('catering_price'),
+        'laundry'  => (int) $allOrders->sum('laundry_price'),
+    ];
+
+    $stats['total'] = $stats['kos'] + $stats['katering'] + $stats['laundry'];
         $orders = Order::where('user_id', $user_id)->latest()->take(5)->get();
         $chartMonths = [];
         $chartData = ['kos' => [], 'katering' => [], 'laundry' => []];
 
-        for ($i = 5; $i >= 0; $i--) {
-            $month = Carbon::now()->subMonths($i);
-            $chartMonths[] = $month->format('M');
+for ($i = 5; $i >= 0; $i--) {
+    $month = Carbon::now()->subMonths($i);
+    $chartMonths[] = $month->format('M');
 
-            $chartData['kos'][] = Order::where('user_id', $user_id)->where('type', 'kos')->whereMonth('created_at', $month->month)->sum('price');
-            $chartData['katering'][] = Order::where('user_id', $user_id)->where('type', 'katering')->whereMonth('created_at', $month->month)->sum('price');
-            $chartData['laundry'][] = Order::where('user_id', $user_id)->where('type', 'laundry')->whereMonth('created_at', $month->month)->sum('price');
-        }
+  
+    $monthlyQuery = Order::where('user_id', $user_id)
+                        ->whereMonth('created_at', $month->month)
+                        ->whereYear('created_at', $month->year);
+    $chartData['kos'][]      = (int) $monthlyQuery->sum('kos_price');
+    $chartData['katering'][] = (int) $monthlyQuery->sum('catering_price');
+    $chartData['laundry'][]  = (int) $monthlyQuery->sum('laundry_price');
+}
             $activeSub = Order::where('user_id', $user_id)
                             ->whereIn('type', ['kos', 'paket', 'bundling']) 
                             ->latest()

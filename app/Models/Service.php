@@ -2,22 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'user_id', 'name', 'type', 'price', 'image', 'whatsapp', 
+        'gender', 'location', 'distance', 'is_verified', 
+        'subtitle', 'schedule', 'features', 'extra_info'
+    ];
 
-   protected $fillable = [
-    'type', 'name', 'location', 'distance', 'rating', 'reviews_count', 'price', 'is_verified', 'image'
-];
-
-    // Casting sangat penting karena data fasilitas dan menu dikirim sebagai JSON
     protected $casts = [
         'features' => 'array',
         'extra_info' => 'array',
-        'is_verified' => 'boolean',
-        'rating' => 'float',
+        'is_verified' => 'boolean'
     ];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+    
 }

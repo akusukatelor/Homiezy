@@ -2,7 +2,7 @@
 
 @section('content')
 {{-- HERO SECTION --}}
-<section class="min-h-[850px] flex items-center pt-24 relative overflow-hidden font-sans">
+<section class="min-h-[850px] flex items-center pt-24 relative overflow-hidden font-sans" data-aos="fade-up" >
     <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071" class="absolute inset-0 w-full h-full object-cover z-0">
     <div class="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-[#0095FF]/40 to-[#0095FF] z-10"></div>
 

@@ -36,13 +36,13 @@ class SearchController extends Controller
     }
 
     public function detail($type, $slug)
-    {
-        $item = Service::where('type', $type)->get()->first(function($value) use ($slug) {
-            return Str::slug($value->name) === $slug;
-        });
+{
+    $item = Service::all()->first(function($value) use ($slug) {
+        return \Illuminate\Support\Str::slug($value->name) === $slug;
+    });
 
-        if (!$item) abort(404);
+    if (!$item) abort(404);
 
-        return view('detail', compact('item'));
-    }
+    return view('detail', compact('item'));
+}
 }

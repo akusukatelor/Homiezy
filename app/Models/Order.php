@@ -10,20 +10,18 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'order_number', // Contoh: ORD001
-        'name',         // Nama layanan yang dibeli
-        'status',       // Diproses, Diantar, Selesai
-        'price',        // Total harga pesanan
-        'type',         // kos, katering, laundry
-        'user_id'       // Relasi ke user yang memesan
+        'order_number', 'name', 'status', 'price', 
+        'kos_price', 'catering_price', 'laundry_price', 
+        'type', 'user_id', 'service_id' 
     ];
 
-    /**
-     * Relasi ke model User
-     * Setiap pesanan dimiliki oleh satu user
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
     }
 }
