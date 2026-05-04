@@ -35,10 +35,14 @@ class PartnerController extends Controller
             'image' => '/storage/' . $path,
             'gender' => $request->gender,
             'location' => $request->location,
+            'distance' => $request->distance,
             'subtitle' => $request->subtitle,
             'schedule' => $request->schedule,
             'features' => $request->features, 
-            'extra_info' => $request->extra_info, 
+            'extra_info' => $request->extra_info,
+            'room_size' => $request->room_size,
+            'electricity' => $request->electricity,
+            'water' => $request->water, 
         ]);
 
         return redirect()->route('home')->with('success', 'Pendaftaran berhasil!');

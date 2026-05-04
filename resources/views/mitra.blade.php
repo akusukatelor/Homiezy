@@ -76,9 +76,9 @@
                 @endforeach
             </div>
             
-            <button class="bg-[#0095FF] text-white px-16 py-5 rounded-2xl font-black text-xl shadow-xl shadow-blue-200 hover:bg-blue-600 transition ">
-                Mulai Daftar Sekarang
-            </button>
+            <a href="{{ route('partner.register') }}" class="bg-white text-[#0095FF] px-12 py-5 rounded-2xl font-black text-xl shadow-2xl hover:bg-blue-50 transition transform hover:scale-105">
+                    Mulai Daftar Sekarang
+                </a>
         </div>
     </section>
 

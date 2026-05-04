@@ -91,10 +91,22 @@
                                     <h5 class="font-bold text-sm text-slate-800">{{ $order->name }}</h5>
                                 </div>
                             </div>
-                            <span class="px-4 py-1 rounded-full text-[10px] font-black 
-                                {{ $order->status == 'Diproses' ? 'bg-blue-100 text-blue-600' : 'bg-emerald-100 text-emerald-600' }}">
+                           <span class="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border italic flex items-center gap-2 w-fit
+                            {{ $order->status == 'Pending' ? 'bg-orange-50 text-orange-600 border-orange-100' : 
+                            ($order->status == 'Success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-50 text-slate-400 border-slate-100') }}">
+                            
+                            @if($order->status == 'Pending')
+                                {{-- Animasi titik berkedip untuk kesan 'sedang menunggu' --}}
+                                <span class="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse"></span>
+                                Menunggu Konfirmasi
+                            @elseif($order->status == 'Success')
+                                {{-- Icon centang untuk kesan 'berhasil/lunas' --}}
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                                Pembayaran Lunas
+                            @else
                                 {{ $order->status }}
-                            </span>
+                            @endif
+                        </span>
                         </div>
                         <p class="text-xs text-slate-400 flex items-center gap-2 mb-3 italic">
                             <i data-lucide="clock" class="w-3 h-3"></i> {{ $order->created_at->format('d M Y') }}

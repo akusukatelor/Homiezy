@@ -5,14 +5,14 @@
     [x-cloak] { display: none !important; }
 </style>
 
-<div class="bg-[#F8FAFC] min-h-screen pt-32 pb-20 font-sans italic" x-data="{ type: 'kos', menus: [''] }">
+<div class="bg-[#F8FAFC] min-h-screen pt-32 pb-20 font-sans " x-data="{ type: 'kos', menus: [''] }">
     <div class="container mx-auto px-6 max-w-4xl">
         <form action="{{ route('partner.store') }}" method="POST" enctype="multipart/form-data" 
               class="bg-white p-12 rounded-[50px] shadow-sm border border-slate-100">
             @csrf
             
             <h1 class="text-4xl font-black mb-2 text-slate-800">Daftar Mitra Homiezy</h1>
-            <p class="text-slate-400 mb-12 font-bold italic">Tingkatkan omset bisnis kos, katering, atau laundry Anda.</p>
+            <p class="text-slate-400 mb-12 font-bold ">Tingkatkan omset bisnis kos, katering, atau laundry Anda.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
                 <div class="space-y-2">
                     <label class="font-black text-xs uppercase text-slate-400 tracking-widest">Tipe Bisnis</label>
@@ -30,6 +30,13 @@
                 <div class="space-y-2 md:col-span-2">
                     <label class="font-black text-xs uppercase text-slate-400 tracking-widest">Lokasi Lengkap / Workshop</label>
                     <input type="text" name="location" required placeholder="Contoh: Grendeng, Purwokerto (Dekat Kampus Unsoed)" class="w-full p-5 bg-slate-50 rounded-3xl border-none focus:ring-2 focus:ring-[#0095FF]">
+                    <label class="font-black text-xs uppercase text-slate-400 tracking-widest ml-2">Patokan & Jarak </label>
+                    <div class="relative">
+                        <i data-lucide="map-pin" class="absolute left-5 top-1/2 -translate-y-1/2 text-[#0095FF] w-5 h-5"></i>
+                        <input type="text" name="distance" required 
+                            placeholder="Contoh: 200 Meter dari Gerbang Depan Unsoed / Belakang GOR Satria" 
+                            class="w-full pl-14 pr-6 py-5 bg-slate-50 border-none rounded-3xl focus:ring-2 focus:ring-[#0095FF] font-semibold text-slate-800">
+                    </div>
                 </div>
 
                 <div class="space-y-2">
@@ -49,29 +56,55 @@
             </div>
 
             <hr class="mb-10 border-slate-100">
-            <div x-show="type === 'kos'" x-transition x-cloak class="p-8 bg-blue-50/50 rounded-[40px] space-y-6 mb-10 border border-blue-100">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label class="font-black text-[10px] uppercase text-blue-400 tracking-widest ml-2">Kategori Penghuni</label>
-                        <select name="gender" class="w-full p-4 rounded-2xl border-none shadow-sm text-slate-500 font-bold">
-                            <option value="Putra">Khusus Putra</option>
-                            <option value="Putri">Khusus Putri</option>
-                            <option value="Campur">Campur</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="space-y-4">
-                    <p class="font-black text-slate-700 text-sm italic">Fasilitas Kos:</p>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        @foreach(['WiFi', 'AC', 'KM Dalam', 'Parkir', 'Dapur', 'CCTV'] as $f)
-                        <label class="flex items-center gap-2 font-bold text-slate-600 text-xs cursor-pointer group">
-                            <input type="checkbox" name="features[]" value="{{ $f }}" class="rounded text-[#0095FF] focus:ring-[#0095FF]"> 
-                            <span class="group-hover:text-[#0095FF] transition">{{ $f }}</span>
-                        </label>
-                        @endforeach
-                    </div>
-                </div>
+           {{-- FIELDS KHUSUS KOS --}}
+    <div x-show="type === 'kos'" x-transition x-cloak class="p-8 bg-blue-50/50 rounded-[40px] space-y-6 mb-10 border border-blue-100">
+        {{-- Baris 1: Gender & Ukuran Kamar --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+                <label class="font-black text-[10px] uppercase text-blue-400 tracking-widest ml-2">Kategori Penghuni</label>
+                <select name="gender" class="w-full p-4 rounded-2xl border-none shadow-sm text-slate-500 font-bold">
+                    <option value="Putra">Khusus Putra</option>
+                    <option value="Putri">Khusus Putri</option>
+                    <option value="Campur">Campur</option>
+                </select>
             </div>
+            <div class="space-y-2">
+                <label class="font-black text-[10px] uppercase text-blue-400 tracking-widest ml-2">Ukuran Kamar (Meter)</label>
+                <input type="text" name="room_size" placeholder="Contoh: 3x3, 3x4, atau 4x5" class="w-full p-4 rounded-2xl border-none shadow-sm text-sm focus:ring-2 focus:ring-blue-400">
+            </div>
+        </div>
+
+    {{-- Baris 2: Listrik & Air --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+            <label class="font-black text-[10px] uppercase text-blue-400 tracking-widest ml-2">Status Listrik</label>
+            <select name="electricity" class="w-full p-4 rounded-2xl border-none shadow-sm text-slate-600 font-bold">
+                <option value="Include">Include Listrik (Gratis)</option>
+                <option value="Exclude">Token/Bayar Sendiri</option>
+            </select>
+        </div>
+        <div class="space-y-2">
+            <label class="font-black text-[10px] uppercase text-blue-400 tracking-widest ml-2">Status Air</label>
+            <select name="water" class="w-full p-4 rounded-2xl border-none shadow-sm text-slate-600 font-bold">
+                <option value="Include">Include Air (Gratis)</option>
+                <option value="Exclude">Bayar Iuran Bulanan</option>
+            </select>
+        </div>
+    </div>
+
+    {{-- Baris 3: Fitur Checkbox --}}
+    <div class="space-y-4">
+        <p class="font-black text-slate-700 text-sm ">Fasilitas Tambahan:</p>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            @foreach(['WiFi', 'AC', 'KM Dalam', 'Parkir', 'Dapur', 'CCTV', 'Lemari', 'Kasur'] as $f)
+            <label class="flex items-center gap-2 font-bold text-slate-600 text-xs cursor-pointer group">
+                <input type="checkbox" name="features[]" value="{{ $f }}" class="rounded text-[#0095FF] focus:ring-[#0095FF]"> 
+                <span class="group-hover:text-[#0095FF] transition">{{ $f }}</span>
+            </label>
+            @endforeach
+        </div>
+    </div>
+</div>
 
             <div x-show="type === 'katering'" x-transition x-cloak class="space-y-8 mb-10">
                 <div class="p-8 bg-emerald-50/50 rounded-[40px] border border-emerald-100 space-y-6">
@@ -86,7 +119,7 @@
                         </div>
                     </div>
                     <div class="space-y-4">
-                        <p class="font-black text-slate-700 text-sm italic">Keunggulan Katering:</p>
+                        <p class="font-black text-slate-700 text-sm ">Keunggulan Katering:</p>
                         <div class="grid grid-cols-2 gap-4">
                             @foreach(['Gratis Ongkir', 'Halal', 'Tanpa MSG', 'Menu Berubah Tiap Hari'] as $ex)
                             <label class="flex items-center gap-2 font-bold text-slate-600 text-xs cursor-pointer group">
@@ -99,7 +132,7 @@
                 </div>
 
                 <div class="p-8 bg-white rounded-[40px] border-2 border-slate-50 space-y-4 shadow-sm">
-                    <label class="font-black text-slate-700 text-sm italic ml-2 flex items-center gap-2">
+                    <label class="font-black text-slate-700 text-sm  ml-2 flex items-center gap-2">
                         <i data-lucide="utensils" class="w-4 h-4 text-emerald-500"></i> Contoh Menu Mingguan:
                     </label>
                     <div class="space-y-3">
@@ -138,7 +171,7 @@
                 </div>
 
                 <div class="space-y-4">
-                    <p class="font-black text-slate-700 text-sm italic">Layanan Laundry:</p>
+                    <p class="font-black text-slate-700 text-sm ">Layanan Laundry:</p>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                         @foreach(['Cuci Setrika', 'Cuci Kering', 'Express 4 Jam', 'Cuci Sepatu', 'Bedcover', 'Parfum Premium'] as $l)
                         <label class="flex items-center gap-2 font-bold text-slate-600 text-[11px] cursor-pointer group">
@@ -151,7 +184,7 @@
             </div>
 
             {{-- SUBMIT BUTTON --}}
-            <button type="submit" class="w-full py-6 bg-[#0095FF] text-white rounded-[32px] font-black text-2xl shadow-xl shadow-blue-100 hover:scale-[1.02] active:scale-95 transition transform italic">
+            <button type="submit" class="w-full py-6 bg-[#0095FF] text-white rounded-[32px] font-black text-2xl shadow-xl shadow-blue-100 hover:scale-[1.02] active:scale-95 transition transform ">
                 Daftarkan Bisnis Sekarang 🚀
             </button>
         </form>

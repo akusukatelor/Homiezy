@@ -100,10 +100,20 @@
                 @endauth
             </div>
 
-            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-slate-600 hover:text-[#0095FF] transition">
-                <i data-lucide="menu" x-show="!mobileMenuOpen" class="w-8 h-8"></i>
-                <i data-lucide="x" x-show="mobileMenuOpen" x-cloak class="w-8 h-8"></i>
-            </button>
+          
+<button @click="mobileMenuOpen = !mobileMenuOpen" 
+        class="md:hidden p-2 text-slate-600 hover:text-[#0095FF] transition relative z-[100]">
+    
+    {{-- Ikon Hamburger --}}
+    <div x-show="!mobileMenuOpen" x-transition:enter="transition duration-200">
+        <i data-lucide="menu" class="w-8 h-8"></i>
+    </div>
+
+    {{-- Ikon Close --}}
+    <div x-show="mobileMenuOpen" x-cloak x-transition:enter="transition duration-200">
+        <i data-lucide="x" class="w-8 h-8 text-[#0095FF]"></i>
+    </div>
+</button>
         </div>
     </div>
 

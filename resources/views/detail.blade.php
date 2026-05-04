@@ -47,30 +47,76 @@
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-50 pt-8">
-                        <h4 class="text-xl font-black mb-4">Deskripsi</h4>
-                        <p class="text-slate-500 leading-relaxed italic">
-                            @if($item->type == 'kos')
-                                {{ $item->name }} merupakan hunian strategis yang berlokasi di {{ $item->location }}. Menawarkan kenyamanan maksimal untuk mahasiswa dengan akses mudah hanya {{ $item->distance }}.
-                            @elseif($item->type == 'katering' && $item->extra_info)
-                                <div class="mt-8 border-t border-slate-50 pt-8">
-                                    <h4 class="text-xl font-black mb-6 italic text-slate-800">🍱 Contoh Menu Kami</h4>
-                                    <div class="space-y-3">
-                                        @foreach($item->extra_info as $menu)
-                                        <div class="flex items-center gap-4 p-5 bg-emerald-50/50 rounded-3xl border border-emerald-100/50">
-                                            <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-emerald-500 shadow-sm">
-                                                <i data-lucide="utensils" class="w-5 h-5"></i>
-                                            </div>
-                                            <span class="font-bold text-slate-700 italic">{{ $menu }}</span>
-                                        </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @else
-                                {{ $item->name }} menyediakan layanan pencucian profesional dengan teknologi modern. Pakaian kamu akan bersih, wangi, dan rapi dalam waktu singkat.
-                            @endif
-                        </p>
+                    @if($item->type === 'kos')
+                    <div class="grid grid-cols-3 gap-4 mb-8 pt-6 border-t border-slate-50">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center gap-4">
+                            <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center"><i data-lucide="ruler" class="w-5 h-5"></i></div>
+                            <div><p class="text-[9px] font-black text-slate-400 uppercase">Ukuran Kamar</p><p class="text-sm font-black text-slate-800">{{ $item->room_size ?? 'Standard' }}</p></div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center gap-4">
+                            <div class="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center"><i data-lucide="zap" class="w-5 h-5"></i></div>
+                            <div><p class="text-[9px] font-black text-slate-400 uppercase">Listrik</p><p class="text-sm font-black text-slate-800">{{ $item->electricity ?? 'Exclude' }}</p></div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center gap-4">
+                            <div class="w-10 h-10 bg-cyan-100 text-cyan-600 rounded-xl flex items-center justify-center"><i data-lucide="droplet" class="w-5 h-5"></i></div>
+                            <div><p class="text-[9px] font-black text-slate-400 uppercase">Air</p><p class="text-sm font-black text-slate-800">{{ $item->water ?? 'Include' }}</p></div>
+                        </div>
                     </div>
+                    @endif
+
+                    <div class="border-t border-slate-50 pt-8">
+    <h4 class="text-xl font-black mb-4 italic">Deskripsi</h4>
+    <div class="text-slate-500 leading-relaxed italic">
+        
+        {{-- KONDISI 1: RUMAH KOS --}}
+        @if($item->type == 'kos')
+            <p>
+                {{ $item->name }} adalah hunian strategis yang berlokasi di {{ $item->location }}. 
+                Berada sekitar {{ $item->distance_info ?? $item->distance }} dari titik utama kampus, 
+                kos ini menawarkan kenyamanan dengan ukuran kamar {{ $item->room_size ?? 'standard' }}. 
+                Untuk fasilitas dasar, biaya air sudah {{ strtolower($item->water ?? 'include') }} 
+                dan listrik bersifat {{ strtolower($item->electricity ?? 'exclude') }}.
+            </p>
+
+        {{-- KONDISI 2: KATERING --}}
+        @elseif($item->type == 'katering')
+            <p>
+                {{ $item->name }} menyediakan layanan katering harian yang sehat dan bergizi untuk mahasiswa di area {{ $item->location }}. 
+                Dapur kami berlokasi sangat dekat, hanya {{ $item->distance_info ?? $item->distance }} dari pusat keramaian, 
+                memastikan makanan sampai ke tanganmu tetap dalam kondisi segar dan hangat.
+            </p>
+
+            {{-- Bagian Menu: Hanya muncul jika datanya ada --}}
+            @if($item->extra_info)
+                <div class="mt-8 border-t border-slate-50 pt-8">
+                    <h4 class="text-xl font-black mb-6 italic text-slate-800">🍱 Contoh Menu Kami</h4>
+                    <div class="space-y-3">
+                        @php 
+                            $menus = is_array($item->extra_info) ? $item->extra_info : json_decode($item->extra_info, true); 
+                        @endphp
+                        @foreach($menus as $menu)
+                            <div class="flex items-center gap-4 p-5 bg-emerald-50/50 rounded-3xl border border-emerald-100/50">
+                                <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-emerald-500 shadow-sm">
+                                    <i data-lucide="utensils" class="w-5 h-5"></i>
+                                </div>
+                                <span class="font-bold text-slate-700 italic">{{ $menu }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+        {{-- KONDISI 3: LAUNDRY --}}
+        @elseif($item->type == 'laundry')
+            <p>
+                {{ $item->name }} hadir sebagai solusi laundry profesional di wilayah {{ $item->location }}. 
+                Dengan jarak sekitar {{ $item->distance_info ?? $item->distance }} dari pemukiman mahasiswa, 
+                kami menjamin pakaian kamu kembali bersih, wangi, dan rapi dalam waktu singkat menggunakan teknologi cuci terbaru.
+            </p>
+        @endif
+
+    </div>
+</div>
                 </div>
 
                 {{-- Fasilitas Berdasarkan Tipe --}}
@@ -132,13 +178,7 @@
                     </div>
 
                     {{-- Info Vendor --}}
-                    <div class="flex items-center gap-4 p-6 bg-slate-50 rounded-3xl">
-                        <img src="https://i.pravatar.cc/150?u={{ $item->id }}" class="w-12 h-12 rounded-2xl object-cover shadow-md">
-                        <div>
-                            <p class="text-[10px] text-slate-400 font-black uppercase">Dikelola oleh</p>
-                            <p class="font-black text-slate-800">Mitra Homiezy Purwokerto</p>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>

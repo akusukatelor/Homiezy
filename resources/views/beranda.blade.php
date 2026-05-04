@@ -40,7 +40,7 @@
         </form>
 
         <h1 class="text-6xl md:text-8xl font-bold mb-10 tracking-tight leading-tight">Feels like home,<br>Anywhere</h1>
-        <p class="text-2xl font-light opacity-95 mb-4 italic">Satu platform untuk semua kebutuhan kos, makan, dan laundry.</p>
+        <p class="text-2xl font-light opacity-95 mb-4 ">Satu platform untuk semua kebutuhan kos, makan, dan laundry.</p>
     </div>
 </section>
 
@@ -74,41 +74,75 @@
 <section class="py-32 bg-[#F8FAFC]" data-aos="fade-up">
     <div class="container mx-auto px-6">
         <div class="text-center mb-20">
-            <span class="bg-[#0095FF] text-white px-8 py-2 rounded-full text-xs font-black shadow-lg shadow-blue-200 uppercase tracking-widest">⚡ Penawaran Terbaik</span>
-            <h2 class="text-6xl mt-8 tracking-tighter">Paket Bundling Hemat</h2>
-            <p class="text-slate-500 mt-6 text-2xl font-medium opacity-80">Gabungin kos, makan, dan laundry dalam satu paket. Hemat sampai 20%!</p>
+            <span class="bg-[#0095FF] text-white px-8 py-2 rounded-full text-[10px] font-black shadow-lg shadow-blue-200 uppercase tracking-widest ">⚡ Penawaran Terbaik</span>
+            <h2 class="text-6xl mt-8 tracking-tighter font-black  text-slate-800">Paket Bundling Hemat</h2>
+            <p class="text-slate-500 mt-6 text-2xl font-bold opacity-80 ">Gabungin kos, makan, dan laundry. Hemat sampai 20%!</p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 items-end">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 items-stretch">
             @foreach($pakets as $pkg)
-            <div class="{{ $pkg->is_popular ? 'bg-[#0095FF] text-white scale-105 shadow-2xl z-10' : 'bg-white text-slate-800' }} p-10 rounded-[48px] relative transition hover:scale-110 duration-500 border border-slate-100">
-                @if($pkg->is_popular)
-                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#0F172A] text-white px-8 py-2 rounded-full text-[10px] font-black tracking-widest shadow-xl">★ PALING POPULER</div>
-                @endif
-                <h3 class="text-3xl font-black mb-2 tracking-tight">{{ $pkg->name }}</h3>
-                <p class="text-xs font-medium opacity-70 mb-8">Solusi hunian lengkap mahasiswa</p>
+            <div class="{{ $pkg->is_popular ? 'bg-[#0095FF] text-white scale-105 shadow-2xl z-10 border-[#0095FF]' : 'bg-white text-slate-800 border-slate-100' }} p-10 rounded-[50px] relative transition hover:scale-110 duration-500 border-2 flex flex-col justify-between">
                 
-                <div class="mb-10 mt-8">
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-5xl font-black tracking-tighter">{{ $pkg->price_display }}</span><span class="text-lg font-bold">/bln</span>
+                @if($pkg->is_popular)
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#0F172A] text-white px-8 py-2 rounded-full text-[10px] font-black tracking-widest shadow-xl ">★ PALING REKOMENDASI</div>
+                @endif
+
+                <div>
+                    <h3 class="text-3xl font-black mb-2 tracking-tight  uppercase">{{ $pkg->name }}</h3>
+                    <p class="text-[10px] font-black opacity-70 mb-8 uppercase tracking-widest ">
+                        {{ $pkg->is_popular ? 'Lifestyle Mahasiswa Sultan' : 'Pilihan Cerdas Mahasiswa' }}
+                    </p>
+                    
+                    <div class="mb-10 mt-8">
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-5xl font-black tracking-tighter">{{ $pkg->price_display }}</span>
+                            <span class="text-lg font-bold ">/bln</span>
+                        </div>
+                        <p class="{{ $pkg->is_popular ? 'text-yellow-300' : 'text-[#0095FF]' }} font-black text-sm mt-4 flex items-center gap-2 uppercase tracking-tight  ">
+                             Hemat {{ $pkg->discount_display }}
+                        </p>
                     </div>
-                    <p class="{{ $pkg->is_popular ? 'text-yellow-300' : 'text-[#0095FF]' }} font-black text-sm mt-4 flex items-center gap-2 uppercase tracking-tight">💰 Hemat {{ $pkg->discount_display }}</p>
+
+                    {{-- INFO LAYANAN DINAMIS --}}
+                    <ul class="space-y-6 mb-12">
+                        {{-- KOS: Selalu ada --}}
+                        <li class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-2xl flex items-center justify-center {{ $pkg->is_popular ? 'bg-white/20' : 'bg-blue-50' }}">
+                                <i data-lucide="home" class="w-5 h-5 {{ $pkg->is_popular ? 'text-white' : 'text-[#0095FF]' }}"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-black uppercase tracking-widest">Kamar Kos</p>
+                                <p class="text-[10px] font-bold opacity-70 ">Fasilitas Lengkap & Nyaman</p>
+                            </div>
+                        </li>
+
+                        {{-- KATERING: Muncul di Meal & Premium --}}
+                        <li class="flex items-center gap-4 {{ !Str::contains(strtolower($pkg->name), ['meal', 'premium']) ? 'opacity-30 grayscale' : '' }}">
+                            <div class="w-10 h-10 rounded-2xl flex items-center justify-center {{ $pkg->is_popular ? 'bg-white/20' : 'bg-emerald-50' }}">
+                                <i data-lucide="utensils" class="w-5 h-5 {{ $pkg->is_popular ? 'text-white' : 'text-emerald-500' }}"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-black uppercase tracking-widest">Catering Sehat</p>
+                                <p class="text-[10px] font-bold opacity-70 ">2x Makan Sehari (Box)</p>
+                            </div>
+                        </li>
+
+                        {{-- LAUNDRY: Muncul di Clean & Premium --}}
+                        <li class="flex items-center gap-4 {{ !Str::contains(strtolower($pkg->name), ['clean', 'premium']) ? 'opacity-30 grayscale' : '' }}">
+                            <div class="w-10 h-10 rounded-2xl flex items-center justify-center {{ $pkg->is_popular ? 'bg-white/20' : 'bg-indigo-50' }}">
+                                <i data-lucide="shirt" class="w-5 h-5 {{ $pkg->is_popular ? 'text-white' : 'text-indigo-500' }}"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-black uppercase tracking-widest">Laundry Express</p>
+                                <p class="text-[10px] font-bold opacity-70 ">Cuci Setrika 15kg/Bln</p>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
 
-                <ul class="space-y-5 mb-12 text-sm font-semibold opacity-90">
-                    <li class="flex items-start gap-4">
-                        <i data-lucide="check-circle" class="w-5 h-5 {{ $pkg->is_popular ? 'text-white' : 'text-[#0095FF]' }}"></i>
-                        <span class="leading-tight">Akses WiFi & Listrik</span>
-                    </li>
-                    <li class="flex items-start gap-4">
-                        <i data-lucide="check-circle" class="w-5 h-5 {{ $pkg->is_popular ? 'text-white' : 'text-[#0095FF]' }}"></i>
-                        <span class="leading-tight">Keamanan 24 Jam</span>
-                    </li>
-                </ul>
-
                 <a href="{{ route('paket.wizard', ['type' => Str::slug($pkg->name)]) }}" 
-                   class="w-full py-5 rounded-3xl font-black text-lg transition shadow-lg text-center block {{ $pkg->is_popular ? 'bg-white text-[#0095FF]' : 'bg-[#0095FF] text-white' }}">
-                    Pilih Paket
+                   class="w-full py-6 rounded-[30px] font-black text-xl transition shadow-xl text-center block transform hover:scale-[1.02] active:scale-95 {{ $pkg->is_popular ? 'bg-white text-[#0095FF] shadow-blue-900/20' : 'bg-[#0095FF] text-white shadow-blue-200' }}">
+                    Pilih Paket 
                 </a>
             </div>
             @endforeach
@@ -135,6 +169,17 @@
                 <div class="relative h-56 md:h-72 overflow-hidden">
                     {{-- Dinamis dari database --}}
                     <img src="{{ $item->image }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
+                    <div class="absolute top-4 left-4 flex flex-col gap-2">
+                        <div class="bg-white/95 px-4 py-1.5 rounded-full text-[9px] font-black shadow-md uppercase text-slate-800">🏠 {{ ucfirst($item->type) }}</div>
+                        
+                        {{-- Badge Gender Khusus Kos --}}
+                        @if($item->type === 'kos')
+                        <div class="px-4 py-1.5 rounded-full text-[9px] font-black shadow-md uppercase text-white
+                            {{ $item->gender === 'Putra' ? 'bg-blue-500' : ($item->gender === 'Putri' ? 'bg-pink-500' : 'bg-slate-800') }}">
+                            {{ $item->gender }}
+                        </div>
+                        @endif
+                    </div>
                     <div class="absolute top-4 left-4 bg-white/95 px-4 py-1.5 rounded-full text-[9px] font-black shadow-md uppercase">🏠 {{ ucfirst($item->type) }}</div>
                     @if($item->is_verified)
                     <div class="absolute top-4 right-4 bg-[#0095FF] text-white px-4 py-1.5 rounded-full text-[9px] font-black shadow-xl tracking-widest">Verified</div>
@@ -153,7 +198,7 @@
                         <span class="text-slate-800 font-black text-xs md:text-sm">{{ $item->rating }}</span>
                     </div>
 
-                    <div class="space-y-2 mb-6 md:mb-8 italic">
+                    <div class="space-y-2 mb-6 md:mb-8 ">
                         <p class="text-slate-400 text-xs md:text-sm flex items-center gap-2 font-medium">
                             <i data-lucide="map-pin" class="w-4 h-4 text-[#0095FF] flex-shrink-0"></i> 
                             <span class="truncate">{{ $item->location }}</span>
@@ -165,12 +210,12 @@
 
                     <div class="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
                         <div>
-                            <p class="text-[9px] text-slate-400 uppercase font-black tracking-widest mb-1 italic">Mulai dari</p>
+                            <p class="text-[9px] text-slate-400 uppercase font-black tracking-widest mb-1 ">Mulai dari</p>
                             <p class="text-xl md:text-2xl font-black text-[#0095FF]">Rp {{ number_format($item->price, 0, ',', '.') }}</p>
                         </div>
                         
                         <a href="{{ route('service.detail', ['type' => $item->type, 'slug' => Str::slug($item->name)]) }}" 
-                           class="bg-[#0095FF] text-white px-5 md:px-7 py-2.5 rounded-xl font-black text-xs md:text-sm shadow-lg shadow-blue-50 transition hover:bg-blue-600 italic">
+                           class="bg-[#0095FF] text-white px-5 md:px-7 py-2.5 rounded-xl font-black text-xs md:text-sm shadow-lg shadow-blue-50 transition hover:bg-blue-600 ">
                             Detail
                         </a>
                     </div>
@@ -209,8 +254,8 @@
                 <div class="flex items-center gap-1 mb-8 text-yellow-400">
                     @for($i=0; $i<5; $i++) <i data-lucide="star" class="w-5 h-5 fill-current"></i> @endfor
                 </div>
-                <p class="text-slate-600 text-lg mb-10 leading-relaxed font-medium italic">"Homiezy bener-bener ngebantu banget! Dulu pusing cari kos yang deket kampus, sekarang tinggal klik langsung dapet. Paket bundling-nya juara!"</p>
-                <div class="inline-block bg-blue-50 text-[#0095FF] px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider mb-10 italic">{{ $t['l'] }}</div>
+                <p class="text-slate-600 text-lg mb-10 leading-relaxed font-medium ">"Homiezy bener-bener ngebantu banget! Dulu pusing cari kos yang deket kampus, sekarang tinggal klik langsung dapet. Paket bundling-nya juara!"</p>
+                <div class="inline-block bg-blue-50 text-[#0095FF] px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider mb-10 ">{{ $t['l'] }}</div>
                 <div class="flex items-center gap-5 pt-8 border-t border-slate-50">
                     <img src="https://i.pravatar.cc/150?u={{ $t['n'] }}" class="w-16 h-16 rounded-full border-4 border-white shadow-xl object-cover">
                     <div>
