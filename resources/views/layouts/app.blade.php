@@ -38,67 +38,81 @@
             </a>
             
             {{-- Desktop Navigation --}}
-            <div class="hidden md:flex items-center gap-8">
-                <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'text-[#0095FF] font-black' : 'text-slate-500 font-bold' }} hover:text-[#0095FF] transition text-sm">Beranda</a>
-                <a href="{{ route('mitra') }}" class="{{ request()->routeIs('mitra') ? 'text-[#0095FF] font-black' : 'text-slate-500 font-bold' }} hover:text-[#0095FF] transition text-sm">Jadi Mitra</a>
-            </div>
+           <div class="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-10">
+            <a href="{{ route('home') }}" 
+               class="font-black uppercase text-[14px]  transition {{ request()->routeIs('home') ? 'text-[#0095FF]' : 'text-slate-400 hover:text-slate-600' }}">
+                Beranda
+            </a>
 
-            {{-- Auth Section --}}
-            <div class="hidden md:flex items-center gap-4 relative z-[70]">
-                @guest
-                    <a href="{{ route('login') }}" class="text-slate-600 font-bold text-sm hover:text-[#0095FF] transition">Masuk</a>
-                    <a href="{{ route('register') }}" class="bg-[#0095FF] text-white px-8 py-3 rounded-full font-black text-sm hover:bg-blue-600 transition shadow-lg shadow-blue-200">Daftar</a>
-                @endguest
+           
+            @guest
+                <a href="{{ route('mitra') }}" 
+                   class="font-black uppercase text-[14px]  transition {{ request()->routeIs('mitra') ? 'text-[#0095FF]' : 'text-slate-400 hover:text-slate-600' }}">
+                    Jadi Mitra
+                </a>
+            @endguest
 
-                @auth
-                    {{-- DROPDOWN PROFILE --}}
-                    <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class="flex items-center gap-3 bg-slate-50 px-5 py-2.5 rounded-full border border-slate-100 hover:bg-white transition shadow-sm group">
-                            <div class="w-8 h-8 bg-[#0095FF] rounded-full flex items-center justify-center text-white text-xs font-black shadow-inner">
-                                {{ substr(Auth::user()->name, 0, 1) }}
-                            </div>
-                            <div class="text-left leading-tight">
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Halo!</p>
-                                <p class="text-sm font-black text-slate-700">{{ explode(' ', Auth::user()->name)[0] }}</p>
-                            </div>
-                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-300 group-hover:text-[#0095FF] transition"></i>
-                        </button>
+            {{-- Jika Auth Customer, tampilkan Dashboard di tengah --}}
+            @auth
+                @if(auth()->user()->role === 'customer')
+                    <a href="{{ route('dashboard') }}" 
+                       class="font-black uppercase text-[14px] tracking-[0.2em] transition {{ request()->routeIs('dashboard') ? 'text-[#0095FF]' : 'text-slate-400 hover:text-slate-600' }}">
+                        Dashboard
+                    </a>
+                @elseif(auth()->user()->role === 'mitra')
+                    <a href="{{ route('mitra.dashboard') }}" 
+                       class="font-black uppercase text-[14px] tracking-[0.2em] transition {{ request()->routeIs('mitra.dashboard') ? 'text-[#0095FF]' : 'text-slate-400 hover:text-slate-600' }}">
+                        Mitra Panel
+                    </a>
+                @endif
+            @endauth
+        </div>
 
-                        {{-- Dropdown Menu --}}
-                        <div x-show="open" @click.away="open = false" x-cloak x-transition
-                             class="absolute right-0 mt-4 w-64 bg-white rounded-[32px] shadow-2xl border border-slate-100 py-6 z-50">
-                            
-                            {{-- Menu Customer --}}
-                            <div class="px-8 mb-4">
-                                <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] mb-3">Menu Mahasiswa</p>
-                                <a href="{{ route('dashboard') }}" class="flex items-center gap-4 text-sm font-bold text-slate-600 hover:text-[#0095FF] transition py-2">
-                                    <i data-lucide="shopping-bag" class="w-4 h-4"></i> Pesanan Saya
-                                </a>
-                            </div>
+        <div class="hidden md:flex items-center gap-4 relative z-[70]">
+            @guest
+                <a href="{{ route('login') }}" class="text-slate-600 font-bold text-sm hover:text-[#0095FF] transition">Masuk</a>
+                <a href="{{ route('register') }}" class="bg-[#0095FF] text-white px-8 py-3 rounded-full font-black text-sm hover:bg-blue-600 transition shadow-lg shadow-blue-200">Daftar</a>
+            @endguest
 
-                            {{-- Menu Mitra (Conditional) --}}
-                            @if(Auth::user()->services()->exists())
-                            <div class="px-8 pt-4 border-t border-slate-50 mb-4">
-                                <p class="text-[9px] font-black text-[#0095FF] uppercase tracking-[0.2em] mb-3">Panel Bisnis</p>
-                                <a href="{{ route('mitra.dashboard') }}" class="flex items-center gap-4 text-sm font-black text-slate-800 hover:text-[#0095FF] transition py-2">
-                                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard Mitra
-                                </a>
-                            </div>
-                            @endif
-
-                            {{-- Logout --}}
-                            <div class="px-8 pt-4 border-t border-slate-50">
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="flex items-center gap-4 text-sm font-black text-red-500 hover:opacity-70 transition w-full">
-                                        <i data-lucide="log-out" class="w-4 h-4"></i> Keluar Akun
-                                    </button>
-                                </form>
-                            </div>
+            @auth
+                <div class="relative" x-data="{ profileOpen: false }">
+                    {{-- Tombol Trigger Profile --}}
+                    <button @click="profileOpen = !profileOpen" @click.away="profileOpen = false" 
+                            class="flex items-center gap-3 bg-slate-50 p-1.5 pr-4 rounded-full border border-slate-100 hover:bg-slate-100 transition">
+                        <div class="w-8 h-8 bg-[#0095FF] rounded-full flex items-center justify-center text-white font-black text-xs italic shadow-sm">
+                            {{ substr(auth()->user()->name, 0, 1) }}
                         </div>
+                        <span class="text-xs font-black italic uppercase tracking-widest text-slate-700">{{ explode(' ', auth()->user()->name)[0] }}</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition" :class="profileOpen ? 'rotate-180' : ''"></i>
+                    </button>
+
+                    {{-- Dropdown Menu --}}
+                    <div x-show="profileOpen" 
+                         x-cloak
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                         class="absolute right-0 mt-3 w-64 bg-white rounded-[32px] shadow-2xl border border-slate-100 py-4 z-[100]">
+                        
+                        <div class="px-6 py-4 border-b border-slate-50 mb-2">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Login Sebagai</p>
+                            <p class="font-black text-slate-800 italic truncate">{{ auth()->user()->name }}</p>
+                            <p class="text-[9px] font-bold text-[#0095FF] uppercase tracking-widest">{{ auth()->user()->role }}</p>
+                        </div>
+
+                        
+                      
+
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="w-full flex items-center gap-3 px-6 py-3 text-red-500 hover:bg-red-50 transition font-black text-xs italic uppercase">
+                                <i data-lucide="log-out" class="w-4 h-4"></i> Keluar Akun
+                            </button>
+                        </form>
                     </div>
-                @endauth
-            </div>
+                </div>
+            @endauth
+        </div>
 
           
 <button @click="mobileMenuOpen = !mobileMenuOpen" 
@@ -138,10 +152,12 @@
             </a>
             @endauth
 
+             @guest
             <a href="{{ route('mitra') }}" @click="mobileMenuOpen = false"
                class="flex items-center gap-4 p-4 rounded-2xl {{ request()->routeIs('mitra') ? 'bg-blue-50 text-[#0095FF]' : 'text-slate-600' }} font-bold text-lg">
                 <i data-lucide="building-2"></i> Jadi Mitra
             </a>
+            @endguest
 
             <hr class="border-slate-100 my-2">
 

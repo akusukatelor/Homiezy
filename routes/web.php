@@ -37,10 +37,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/lengkapi-profil', function() { return view('auth.complete-profile'); })->name('complete.profile');
     Route::post('/lengkapi-profil', [AuthController::class, 'updateProfile']);
 
+    Route::middleware(['role:mitra'])->prefix('mitra')->name('mitra.')->group(function () {
+        Route::put('/update/{id}', [MitraController::class, 'update'])->name('update');
+        Route::post('/order/confirm/{id}', [OrderController::class, 'confirm'])->name('order.confirm');
+    });
+
     // FITUR CHECKOUT & BUNDLING (Pindahkan ke sini!)
     Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
     Route::post('/order/process/{id}', [OrderController::class, 'process'])->name('order.process');
     Route::post('/order/confirm/{id}', [OrderController::class, 'confirm'])->name('order.confirm');
+    Route::patch('/order/cancel/{id}', [OrderController::class, 'cancel'])->name('order.cancel');
+    Route::get('/order/edit-item/{id}/{category}', [OrderController::class, 'editItem'])->name('order.edit_item');
+    Route::put('/order/update-item/{id}', [OrderController::class, 'updateItem'])->name('order.update_item');
 
     // Fitur Mitra
     Route::get('/jadi-mitra/register', [PartnerController::class, 'create'])->name('partner.register');
@@ -53,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     $kosItems = Service::where('type', 'kos')->get();
     $cateringItems = Service::where('type', 'katering')->get();
     $laundryItems = Service::where('type', 'laundry')->get();
+    
 
     $validTypes = ['premium', 'basic', 'standard-clean', 'standard-meal'];
     

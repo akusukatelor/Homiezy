@@ -45,6 +45,9 @@ class PartnerController extends Controller
             'water' => $request->water, 
         ]);
 
-        return redirect()->route('home')->with('success', 'Pendaftaran berhasil!');
+        $user = auth()->user();
+        $user->update(['role' => 'mitra']);
+
+        return redirect()->route('mitra.dashboard')->with('success', 'Pendaftaran berhasil!');
     }
 }

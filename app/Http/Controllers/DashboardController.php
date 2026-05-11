@@ -13,6 +13,14 @@ class DashboardController extends Controller
     $user = auth()->user();
     $user_id = $user->id;
 
+   $packageSettings = [
+        'premium'        => ['kos', 'katering', 'laundry'],
+        'basic'          => ['kos', 'katering', 'laundry'],
+        'standard-clean' => ['kos', 'laundry'],
+        'standard-meal'  => ['kos', 'katering'],
+    ];
+    
+
     // Filter hanya pesanan yang sudah dikonfirmasi 'Success' untuk statistik
     $allOrdersSuccess = Order::where('user_id', $user_id)
                              ->where('status', 'Success')
@@ -27,7 +35,7 @@ class DashboardController extends Controller
     $stats['total'] = $stats['kos'] + $stats['katering'] + $stats['laundry'];
 
     // Daftar riwayat tetap menampilkan semua (agar user bisa lihat yang masih 'Pending')
-    $orders = Order::where('user_id', $user_id)->latest()->take(5)->get();
+   $orders = Order::where('user_id', $user_id)->latest()->get();
 
     $chartMonths = [];
     $chartData = ['kos' => [], 'katering' => [], 'laundry' => []];
@@ -53,6 +61,6 @@ class DashboardController extends Controller
                         ->latest()
                         ->first();
 
-    return view('dashboard', compact('stats', 'orders', 'chartMonths', 'chartData', 'activeSub'));
+    return view('dashboard', compact('stats', 'orders', 'chartMonths', 'chartData', 'activeSub', 'packageSettings'));
 }
 }

@@ -32,7 +32,13 @@
             <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Atau</span>
         </div>
 
-        <a href="{{ route('auth.google') }}" class="w-full flex items-center justify-center gap-4 py-4 border-2 border-slate-100 rounded-[24px] font-bold text-slate-600 hover:bg-slate-50 transition active:scale-95">
+        @php
+    // Cek apakah tujuan akhir user adalah mendaftar jadi mitra
+    $intendedUrl = session()->get('url.intended', '');
+    $isMitraIntent = str_contains($intendedUrl, 'mitra') || str_contains($intendedUrl, 'partner');
+@endphp
+
+        <a href="{{ route('auth.google', ['role' => $isMitraIntent ? 'mitra' : 'customer']) }}" class="w-full flex items-center justify-center gap-4 py-4 border-2 border-slate-100 rounded-[24px] font-bold text-slate-600 hover:bg-slate-50 transition active:scale-95">
             <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5">
             <span>Sign in with Google</span>
         </a>
