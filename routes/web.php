@@ -9,6 +9,7 @@ use App\Http\Controllers\MitraController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\SuperAdminController;
 
 
 // --- GUEST ROUTES (Bisa diakses tanpa login) ---
@@ -28,10 +29,24 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
+// --- SUPER ADMIN ROUTES ---
+Route::middleware(['auth', 'superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
+    Route::get('/dashboard', [SuperAdminController::class, 'index'])->name('dashboard');
+
+    // Manajemen layanan
+    Route::get('/layanan', [SuperAdminController::class, 'layanan'])->name('layanan');
+    Route::delete('/layanan/{id}', [SuperAdminController::class, 'destroyLayanan'])->name('layanan.destroy');
+    Route::patch('/layanan/{id}/toggle', [SuperAdminController::class, 'toggleLayanan'])->name('layanan.toggle');
+
+    // Manajemen user
+    Route::get('/users', [SuperAdminController::class, 'users'])->name('users');
+    Route::delete('/users/{id}', [SuperAdminController::class, 'destroyUser'])->name('users.destroy');
+});
+
 
 // --- AUTHENTICATED ROUTES (Wajib Login) ---
 Route::middleware(['auth'])->group(function () {
-    
+
     // User Dashboard & Profil
     Route::get('/dashboard-saya', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/lengkapi-profil', function() { return view('auth.complete-profile'); })->name('complete.profile');
@@ -61,15 +76,15 @@ Route::middleware(['auth'])->group(function () {
     $kosItems = Service::where('type', 'kos')->get();
     $cateringItems = Service::where('type', 'katering')->get();
     $laundryItems = Service::where('type', 'laundry')->get();
-    
+
 
     $validTypes = ['premium', 'basic', 'standard-clean', 'standard-meal'];
-    
+
     // Kirim data ke view
     if (in_array($type, $validTypes)) {
         return view('paket.' . $type, compact('kosItems', 'cateringItems', 'laundryItems'));
     }
-    
+
     return view('paket-wizard', compact('type', 'kosItems', 'cateringItems', 'laundryItems'));
 })->name('paket.wizard');
 });

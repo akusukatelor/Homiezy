@@ -7,15 +7,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
+use GuzzleHttp\Client;
 
 class AuthController extends Controller
 {
-    public function showLogin() { 
-        return view('auth.login'); 
+    public function showLogin() {
+        return view('auth.login');
     }
 
-    public function showRegister() { 
-        return view('auth.register'); 
+    public function showRegister() {
+        return view('auth.register');
     }
 
     /**
@@ -41,7 +42,10 @@ class AuthController extends Controller
 }
 
     public function handleGoogleCallback() {
-      $googleUser = Socialite::driver('google')->user();
+    $guzzleClient = new Client([
+        'verify' => false,
+    ]);
+    $googleUser = Socialite::driver('google')->user();
     $user = User::where('email', $googleUser->email)->first();
 
     if (!$user) {
@@ -56,7 +60,7 @@ class AuthController extends Controller
             'password' => Hash::make(str()->random(16)),
             'role' => $role, // <--- Sekarang dinamis!
         ]);
-        
+
         session()->forget('register_as_role');
     }
         Auth::login($user);

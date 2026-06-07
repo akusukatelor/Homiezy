@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Daftarkan alias di sini agar bisa dipanggil di web.php
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureUserRole::class,
+            'superadmin' => \App\Http\Middleware\SuperAdminMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
