@@ -37,6 +37,7 @@ class AuthController extends Controller
     }
 
     return Socialite::driver('google')
+        ->stateless()
         ->with(['prompt' => 'select_account'])
         ->redirect();
 }
@@ -45,7 +46,9 @@ class AuthController extends Controller
     $guzzleClient = new Client([
         'verify' => false,
     ]);
-    $googleUser = Socialite::driver('google')->user();
+    $googleUser = Socialite::driver('google')
+        ->stateless()
+        ->user();
     $user = User::where('email', $googleUser->email)->first();
 
     if (!$user) {

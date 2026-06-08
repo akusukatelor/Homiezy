@@ -3,7 +3,7 @@
 @section('content')
 <div class="bg-[#F8FAFC] min-h-screen pt-32 pb-20 font-sans">
     <div class="container mx-auto px-6">
-        
+
         {{-- Header Dashboard --}}
         <div class="mb-12">
             <h1 class="text-4xl font-bold text-slate-900 mb-2">Dashboard Saya</h1>
@@ -56,7 +56,7 @@
                 </div>
                 <div class="space-y-4">
                     @foreach($categories as $cat)
-                        @php 
+                        @php
                             $val = $stats[$cat['key']];
                             $percent = $stats['total'] > 0 ? round(($val / $stats['total']) * 100) : 0;
                         @endphp
@@ -74,24 +74,24 @@
 
         {{-- Row Pesanan & Langganan --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 italic">
-            
+
             {{-- Bagian Pesanan Terbaru (Dynamic Tracking) --}}
             <div class="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm">
                 <div class="flex items-center gap-3 mb-10">
                     <i data-lucide="package" class="w-6 h-6 text-slate-800"></i>
                     <h4 class="font-bold text-xl uppercase tracking-tighter">Status Pesanan Terbaru</h4>
                 </div>
-                
+
                 <div class="space-y-10">
     @forelse($orders as $order)
         @php
             // Deteksi apakah ini paket bundling atau pesanan satuan
             $isBundling = $order->type === 'bundling';
-            
+
             // Jika bundling, ambil aturan paketnya. Jika bukan, layanan yang muncul hanya tipe layanannya sendiri
-            $allowedCategories = $isBundling 
-                                 ? ($packageSettings[$order->package_type] ?? ['kos', 'katering', 'laundry']) 
-                                 : [$order->type]; 
+            $allowedCategories = $isBundling
+                                 ? ($packageSettings[$order->package_type] ?? ['kos', 'katering', 'laundry'])
+                                 : [$order->type];
         @endphp
 
         <div class="relative overflow-hidden bg-white rounded-[45px] border border-slate-100 shadow-xl shadow-slate-200/50 group transition-all duration-500 hover:-translate-y-1">
@@ -125,7 +125,7 @@
                 {{-- Status Badge --}}
                 <div class="flex flex-col items-end">
                     <span class="px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border-2 italic flex items-center gap-2 shadow-sm
-                        {{ $order->status == 'Pending' ? 'bg-orange-50 text-orange-600 border-orange-100' : 
+                        {{ $order->status == 'Pending' ? 'bg-orange-50 text-orange-600 border-orange-100' :
                         ($order->status == 'Success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-red-50 text-red-500 border-red-100') }}">
                         @if($order->status == 'Pending')
                             <span class="relative flex h-2 w-2">
@@ -151,7 +151,7 @@
         @if($isBundling)
             {{-- Logika untuk Paket Bundling --}}
             @foreach(['kos', 'katering', 'laundry'] as $cat)
-    @php 
+    @php
         // 1. Tentukan nama kolom (slug)
         $idField = ($cat == 'katering' ? 'catering' : $cat) . '_id';
         $priceField = ($cat == 'katering' ? 'catering' : $cat) . '_price';
@@ -163,9 +163,9 @@
         $isServiceActive = ($order->$idField != null) || ($servicePrice > 0);
     @endphp
 
-    <div class="relative p-5 rounded-[30px] border transition-all duration-300 
+    <div class="relative p-5 rounded-[30px] border transition-all duration-300
         {{ $isServiceActive ? 'bg-white border-slate-100 shadow-sm hover:shadow-md' : 'bg-slate-50/50 border-dashed border-slate-200 opacity-60' }}">
-        
+
         <div class="flex flex-col h-full justify-between">
             <div class="flex justify-between items-start mb-6">
                 <div class="p-3.5 rounded-2xl {{ $isServiceActive ? 'bg-[#F0F7FF] text-[#0095FF]' : 'bg-slate-100 text-slate-400' }}">
@@ -214,7 +214,7 @@
                     </div>
                     {{-- Tombol Edit untuk Satuan --}}
                     @if($order->status == 'Pending')
-                        <a href="{{ route('order.edit_item', [$order->id, $order->type]) }}" 
+                        <a href="{{ route('order.edit_item', [$order->id, $order->type]) }}"
                            class="text-[#0095FF] border border-blue-100 bg-white p-3 rounded-xl hover:bg-blue-50 transition shadow-sm">
                             <i data-lucide="edit-3" class="w-5 h-5"></i>
                         </a>
@@ -253,7 +253,29 @@
                             </button>
                         </form>
                     @endif
-                    
+                    @if($order->status == 'Pending')
+    @if(!$order->xendit_invoice_id)
+        {{-- Belum punya invoice, buat baru --}}
+        <a href="{{ route('xendit.create', $order->id) }}"
+           class="group/btn px-6 py-3 bg-[#0095FF] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest italic hover:bg-blue-600 transition-all duration-300 flex items-center gap-2 shadow-lg shadow-blue-100">
+            <i data-lucide="credit-card" class="w-4 h-4"></i>
+            Bayar Sekarang
+        </a>
+    @else
+        {{-- Sudah punya invoice, lanjut bayar --}}
+        <a href="{{ $order->xendit_invoice_url }}" target="_blank"
+           class="group/btn px-6 py-3 bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest italic hover:bg-orange-600 transition-all duration-300 flex items-center gap-2 shadow-lg shadow-orange-100">
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+            Lanjut Bayar
+        </a>
+    @endif
+@elseif($order->payment_status === 'paid')
+    <span class="px-6 py-3 bg-emerald-50 text-emerald-600 rounded-2xl text-[10px] font-black uppercase tracking-widest italic border border-emerald-100 flex items-center gap-2">
+        <i data-lucide="check-circle" class="w-4 h-4"></i>
+        Lunas ✓
+    </span>
+@endif
+
                 </div>
             </div>
         </div>
@@ -333,8 +355,8 @@
                     { label: 'Laundry', data: chartData.laundry, backgroundColor: '#0F172A', borderRadius: 8 }
                 ]
             },
-            options: { 
-                responsive: true, 
+            options: {
+                responsive: true,
                 maintainAspectRatio: false,
                 plugins: { legend: { position: 'bottom', labels: { font: { weight: 'bold', family: 'sans-serif' } } } }
             }
@@ -347,17 +369,17 @@
             type: 'doughnut',
             data: {
                 labels: ['Kos', 'Katering', 'Laundry'],
-                datasets: [{ 
-                    data: [{{ $stats['kos'] }}, {{ $stats['katering'] }}, {{ $stats['laundry'] }}], 
-                    backgroundColor: ['#0095FF', '#0061AF', '#0F172A'], 
-                    borderWidth: 0 
+                datasets: [{
+                    data: [{{ $stats['kos'] }}, {{ $stats['katering'] }}, {{ $stats['laundry'] }}],
+                    backgroundColor: ['#0095FF', '#0061AF', '#0F172A'],
+                    borderWidth: 0
                 }]
             },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { legend: { display: false } }, 
-                cutout: '70%' 
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '70%'
             }
         });
     }

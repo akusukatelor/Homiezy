@@ -10,6 +10,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\XenditController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 
 // --- GUEST ROUTES (Bisa diakses tanpa login) ---
@@ -43,9 +45,19 @@ Route::middleware(['auth', 'superadmin'])->prefix('superadmin')->name('superadmi
     Route::delete('/users/{id}', [SuperAdminController::class, 'destroyUser'])->name('users.destroy');
 });
 
+Route::post('/xendit/webhook', [XenditController::class, 'webhook'])
+    ->name('xendit.webhook')
+    ->withoutMiddleware([VerifyCsrfToken::class]);
+
 
 // --- AUTHENTICATED ROUTES (Wajib Login) ---
 Route::middleware(['auth'])->group(function () {
+    Route::get('/payment/create/{orderId}', [XenditController::class, 'createInvoice'])
+        ->name('xendit.create');
+    Route::get('/payment/success', [XenditController::class, 'success'])
+        ->name('xendit.success');
+    Route::get('/payment/failure', [XenditController::class, 'failure'])
+        ->name('xendit.failure');
 
     // User Dashboard & Profil
     Route::get('/dashboard-saya', [DashboardController::class, 'index'])->name('dashboard');

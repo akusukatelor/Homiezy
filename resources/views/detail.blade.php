@@ -3,7 +3,7 @@
 @section('content')
 <div class="bg-[#F8FAFC] min-h-screen pt-28 pb-20 font-sans italic" data-aos="fade-up">
     <div class="container mx-auto px-6">
-        
+
         {{-- Tombol Kembali --}}
         <div class="flex justify-between items-center mb-8">
             <a href="javascript:history.back()" class="flex items-center gap-2 text-slate-600 font-bold hover:text-[#0095FF] transition">
@@ -22,7 +22,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {{-- KOLOM KIRI --}}
             <div class="lg:col-span-2 space-y-10">
-                
+
                 {{-- Image Hero --}}
                 <div class="relative h-[500px] rounded-[40px] overflow-hidden shadow-xl">
                     <img src="{{ $item->image }}" class="w-full h-full object-cover">
@@ -36,13 +36,13 @@
                 {{-- Card Info Utama --}}
                 <div class="bg-white p-10 rounded-[40px] border border-slate-50 shadow-sm">
                     <h1 class="text-4xl font-black mb-4 text-slate-800">{{ $item->name }}</h1>
-                    
+
                     <div class="flex flex-wrap items-center gap-6 text-slate-400 font-bold text-sm mb-8 italic">
                         <p class="flex items-center gap-2"><i data-lucide="map-pin" class="text-[#0095FF] w-4 h-4"></i> {{ $item->location }}</p>
                         <p class="text-[#0095FF] flex items-center gap-2"><i data-lucide="navigation" class="w-4 h-4"></i> {{ $item->distance }}</p>
                         <div class="flex items-center gap-2">
                             <i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-current"></i>
-                            <span class="text-slate-800">{{ $item->rating }}</span> 
+                            <span class="text-slate-800">{{ $item->rating }}</span>
                             <span>({{ $item->reviews_count }} ulasan)</span>
                         </div>
                     </div>
@@ -67,22 +67,22 @@
                     <div class="border-t border-slate-50 pt-8">
     <h4 class="text-xl font-black mb-4 italic">Deskripsi</h4>
     <div class="text-slate-500 leading-relaxed italic">
-        
+
         {{-- KONDISI 1: RUMAH KOS --}}
         @if($item->type == 'kos')
             <p>
-                {{ $item->name }} adalah hunian strategis yang berlokasi di {{ $item->location }}. 
-                Berada sekitar {{ $item->distance_info ?? $item->distance }} dari titik utama kampus, 
-                kos ini menawarkan kenyamanan dengan ukuran kamar {{ $item->room_size ?? 'standard' }}. 
-                Untuk fasilitas dasar, biaya air sudah {{ strtolower($item->water ?? 'include') }} 
+                {{ $item->name }} adalah hunian strategis yang berlokasi di {{ $item->location }}.
+                Berada sekitar {{ $item->distance_info ?? $item->distance }} dari titik utama kampus,
+                kos ini menawarkan kenyamanan dengan ukuran kamar {{ $item->room_size ?? 'standard' }}.
+                Untuk fasilitas dasar, biaya air sudah {{ strtolower($item->water ?? 'include') }}
                 dan listrik bersifat {{ strtolower($item->electricity ?? 'exclude') }}.
             </p>
 
         {{-- KONDISI 2: KATERING --}}
         @elseif($item->type == 'katering')
             <p>
-                {{ $item->name }} menyediakan layanan katering harian yang sehat dan bergizi untuk mahasiswa di area {{ $item->location }}. 
-                Dapur kami berlokasi sangat dekat, hanya {{ $item->distance_info ?? $item->distance }} dari pusat keramaian, 
+                {{ $item->name }} menyediakan layanan katering harian yang sehat dan bergizi untuk mahasiswa di area {{ $item->location }}.
+                Dapur kami berlokasi sangat dekat, hanya {{ $item->distance_info ?? $item->distance }} dari pusat keramaian,
                 memastikan makanan sampai ke tanganmu tetap dalam kondisi segar dan hangat.
             </p>
 
@@ -91,8 +91,8 @@
                 <div class="mt-8 border-t border-slate-50 pt-8">
                     <h4 class="text-xl font-black mb-6 italic text-slate-800">🍱 Contoh Menu Kami</h4>
                     <div class="space-y-3">
-                        @php 
-                            $menus = is_array($item->extra_info) ? $item->extra_info : json_decode($item->extra_info, true); 
+                        @php
+                            $menus = is_array($item->extra_info) ? $item->extra_info : json_decode($item->extra_info, true);
                         @endphp
                         @foreach($menus as $menu)
                             <div class="flex items-center gap-4 p-5 bg-emerald-50/50 rounded-3xl border border-emerald-100/50">
@@ -109,8 +109,8 @@
         {{-- KONDISI 3: LAUNDRY --}}
         @elseif($item->type == 'laundry')
             <p>
-                {{ $item->name }} hadir sebagai solusi laundry profesional di wilayah {{ $item->location }}. 
-                Dengan jarak sekitar {{ $item->distance_info ?? $item->distance }} dari pemukiman mahasiswa, 
+                {{ $item->name }} hadir sebagai solusi laundry profesional di wilayah {{ $item->location }}.
+                Dengan jarak sekitar {{ $item->distance_info ?? $item->distance }} dari pemukiman mahasiswa,
                 kami menjamin pakaian kamu kembali bersih, wangi, dan rapi dalam waktu singkat menggunakan teknologi cuci terbaru.
             </p>
         @endif
@@ -159,17 +159,45 @@
                         } elseif (str_starts_with($wa, '+62')) {
                             $wa = substr($wa, 1);
                         }
-                        
+
                         $pesanWA = "Halo Homiezy, saya tertarik dengan layanan *" . $item->name . "* yang berada di " . $item->location;
                     @endphp
 
-                  <form action="{{ route('order.process', $item->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" 
-                                class="w-full py-5 bg-[#0095FF] text-white rounded-2xl font-black text-xl shadow-lg hover:bg-blue-600 transition transform hover:scale-105 mb-6 text-center active:scale-95 italic">
-                            Booking Sekarang
-                        </button>
-                    </form>
+{{-- Tombol Booking --}}
+<form action="{{ route('order.process', $item->id) }}" method="POST">
+    @csrf
+    <button type="submit"
+            class="w-full py-5 bg-[#0095FF] text-white rounded-2xl font-black text-xl shadow-lg hover:bg-blue-600 transition transform hover:scale-105 mb-4 text-center active:scale-95 italic">
+        Booking Sekarang
+    </button>
+</form>
+
+{{-- Tombol Bayar Sekarang --}}
+@auth
+    @php
+        $existingOrder = auth()->user()->orders()
+            ->where('service_id', $item->id)
+            ->where('status', 'Pending')
+            ->whereNotNull('xendit_invoice_id')
+            ->first();
+    @endphp
+
+    @if($existingOrder)
+    <a href="{{ route('xendit.create', $existingOrder->id) }}"
+       class="w-full py-5 bg-emerald-500 text-white rounded-2xl font-black text-xl shadow-lg shadow-emerald-100 hover:bg-emerald-600 transition transform hover:scale-105 mb-4 text-center active:scale-95 italic flex items-center justify-center gap-3">
+        <i data-lucide="credit-card" class="w-5 h-5"></i>
+        Bayar Sekarang
+    </a>
+    @endif
+@endauth
+
+{{-- Tombol Chat WA --}}
+<a href="https://wa.me/{{ $wa }}?text={{ urlencode($pesanWA) }}"
+   target="_blank"
+   class="w-full py-5 bg-white border-2 border-slate-200 text-slate-700 rounded-2xl font-black text-xl shadow-sm hover:border-green-400 hover:text-green-500 transition transform hover:scale-105 mb-6 text-center active:scale-95 italic flex items-center justify-center gap-3">
+    <i data-lucide="message-circle" class="w-5 h-5"></i>
+    Chat WhatsApp
+</a>
 
                     <div class="space-y-4 mb-10 text-xs font-bold text-slate-500">
                         <div class="flex items-center gap-3"><i data-lucide="clock" class="w-4 h-4 text-[#0095FF]"></i> Konfirmasi Instan</div>
@@ -178,7 +206,7 @@
                     </div>
 
                     {{-- Info Vendor --}}
-                    
+
                 </div>
             </div>
         </div>
