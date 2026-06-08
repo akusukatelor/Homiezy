@@ -140,7 +140,130 @@
                 @endif
                     </div>
                 </div>
+                {{-- SECTION ULASAN --}}
+<div class="bg-white p-10 rounded-[40px] border border-slate-50 shadow-sm italic">
+
+    {{-- Header rating --}}
+    <div class="flex items-center justify-between mb-8">
+        <h4 class="text-xl font-black italic">Ulasan Mahasiswa</h4>
+        <div class="flex items-center gap-2 bg-yellow-50 px-4 py-2 rounded-2xl border border-yellow-100">
+            <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+            <span class="font-black text-slate-800">{{ number_format($item->rating, 1) }}</span>
+            <span class="text-slate-400 font-bold text-sm">({{ $item->reviews_count }} ulasan)</span>
+        </div>
+    </div>
+
+    {{-- Form Tambah Review --}}
+    @auth
+        @if($userOrder && !$hasReviewed)
+        <div class="mb-8 p-8 bg-blue-50/50 rounded-[32px] border border-blue-100"
+             x-data="{ rating: 0, hovered: 0 }">
+            <h5 class="font-black text-slate-800 mb-6 flex items-center gap-2">
+                <i data-lucide="edit-3" class="w-4 h-4 text-[#0095FF]"></i>
+                Bagikan Pengalamanmu
+            </h5>
+            <form action="{{ route('review.store') }}" method="POST" class="space-y-6">
+                @csrf
+                <input type="hidden" name="service_id" value="{{ $item->id }}">
+                <input type="hidden" name="order_id" value="{{ $userOrder->id }}">
+
+                {{-- Star Rating --}}
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Rating</label>
+                    <div class="flex gap-2">
+                        @for($i = 1; $i <= 5; $i++)
+                        <label class="cursor-pointer">
+                            <input type="radio" name="rating" value="{{ $i }}"
+                                   x-on:change="rating = {{ $i }}" class="hidden">
+                            <i data-lucide="star"
+                               x-on:mouseenter="hovered = {{ $i }}"
+                               x-on:mouseleave="hovered = 0"
+                               :class="(hovered >= {{ $i }} || rating >= {{ $i }})
+                                   ? 'text-yellow-400 fill-current w-8 h-8'
+                                   : 'text-slate-200 w-8 h-8'"
+                               class="transition-colors duration-150"></i>
+                        </label>
+                        @endfor
+                    </div>
+                </div>
+
+                {{-- Komentar --}}
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Komentar</label>
+                    <textarea name="comment" rows="3" required
+                              placeholder="Ceritakan pengalamanmu menggunakan layanan ini..."
+                              class="w-full p-4 bg-white rounded-2xl border border-slate-200 font-bold text-slate-700 focus:ring-2 focus:ring-[#0095FF] focus:border-transparent outline-none resize-none text-sm"></textarea>
+                </div>
+
+                <button type="submit"
+                        class="px-8 py-3 bg-[#0095FF] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-blue-600 transition italic shadow-lg shadow-blue-100">
+                    Kirim Ulasan
+                </button>
+            </form>
+        </div>
+        @elseif($hasReviewed)
+        <div class="mb-8 p-6 bg-emerald-50 rounded-[24px] border border-emerald-100 flex items-center gap-3">
+            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-500"></i>
+            <p class="font-bold text-emerald-600 text-sm italic">Kamu sudah memberikan ulasan untuk layanan ini.</p>
+        </div>
+        @endif
+    @endauth
+
+    {{-- Flash success/error --}}
+    @if(session('success'))
+    <div class="mb-6 p-4 bg-emerald-50 rounded-2xl border border-emerald-100 text-emerald-600 font-bold text-sm italic flex items-center gap-2">
+        <i data-lucide="check-circle" class="w-4 h-4"></i>
+        {{ session('success') }}
+    </div>
+    @endif
+    @if(session('error'))
+    <div class="mb-6 p-4 bg-red-50 rounded-2xl border border-red-100 text-red-500 font-bold text-sm italic flex items-center gap-2">
+        <i data-lucide="alert-circle" class="w-4 h-4"></i>
+        {{ session('error') }}
+    </div>
+    @endif
+
+    {{-- List Review --}}
+    <div class="space-y-6">
+        @forelse($reviews as $review)
+        <div class="p-6 bg-slate-50/50 rounded-[28px] border border-slate-100">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-[#0095FF] rounded-2xl flex items-center justify-center font-black text-white text-sm">
+                        {{ strtoupper(substr($review->user->name, 0, 1)) }}
+                    </div>
+                    <div>
+                        <p class="font-black text-slate-800 text-sm">{{ $review->user->name }}</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                            {{ $review->created_at->diffForHumans() }}
+                        </p>
+                    </div>
+                </div>
+                {{-- Bintang --}}
+                <div class="flex gap-0.5">
+                    @for($i = 1; $i <= 5; $i++)
+                    <i data-lucide="star"
+                       class="w-4 h-4 {{ $i <= $review->rating ? 'text-yellow-400 fill-current' : 'text-slate-200' }}"></i>
+                    @endfor
+                </div>
             </div>
+            <p class="text-slate-600 font-bold text-sm leading-relaxed italic">
+                {{ $review->comment }}
+            </p>
+        </div>
+        @empty
+        <div class="py-12 text-center">
+            <div class="w-16 h-16 bg-slate-50 rounded-[20px] flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="message-square" class="w-7 h-7 text-slate-200"></i>
+            </div>
+            <p class="text-slate-400 font-bold text-sm italic">Belum ada ulasan. Jadilah yang pertama! ✨</p>
+        </div>
+        @endforelse
+    </div>
+</div>
+            </div>
+
+
 
             {{-- SIDEBAR BOOKING (Sticky) --}}
             <div class="space-y-8">

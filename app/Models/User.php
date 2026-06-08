@@ -15,12 +15,15 @@ class User extends Authenticatable
      * Pastikan 'role' ada di sini agar perpindahan role user bisa diproses.
      */
     protected $fillable = [
-        'name', 
-        'email', 
-        'whatsapp', 
-        'password', 
-        'google_id', 
-        'role', 
+        'name',
+        'email',
+        'whatsapp',
+        'password',
+        'google_id',
+        'role',
+        'bank_name',
+        'bank_account_number',
+        'bank_account_name',
     ];
 
     protected $hidden = [

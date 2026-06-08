@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\Service; 
+use App\Models\Service;
 
 class SearchController extends Controller
 {
@@ -43,6 +43,24 @@ class SearchController extends Controller
 
     if (!$item) abort(404);
 
-    return view('detail', compact('item'));
+    // Ambil semua review
+    $reviews = $item->reviews()->with('user')->latest()->get();
+
+    // Cek apakah user sudah pernah order layanan ini dan statusnya Success
+    $userOrder = null;
+    $hasReviewed = false;
+
+    if (auth()->check()) {
+        $userOrder = auth()->user()->orders()
+            ->where('service_id', $item->id)
+            ->where('status', 'Success')
+            ->first();
+
+        $hasReviewed = \App\Models\Review::where('user_id', auth()->id())
+            ->where('service_id', $item->id)
+            ->exists();
+    }
+
+    return view('detail', compact('item', 'reviews', 'userOrder', 'hasReviewed'));
 }
 }

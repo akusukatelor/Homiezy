@@ -3,8 +3,28 @@
 @section('admin_content')
 
 <div class="space-y-10">
+    {{-- Notifikasi Pesanan Baru Dibayar --}}
+@if($newPaidOrders > 0)
+<div class="mb-8 p-6 bg-emerald-50 border border-emerald-200 rounded-[28px] flex items-center gap-4"
+     data-aos="fade-down">
+    <div class="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+        <i data-lucide="bell-ring" class="w-6 h-6 text-white"></i>
+    </div>
+    <div class="flex-1">
+        <p class="font-black text-emerald-700">
+            🎉 Ada {{ $newPaidOrders }} pesanan baru yang sudah dibayar!
+        </p>
+        <p class="text-[11px] font-bold text-emerald-500 uppercase tracking-widest mt-0.5">
+            Segera konfirmasi untuk memproses pesanan
+        </p>
+    </div>
+    <span class="px-4 py-2 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest animate-pulse">
+        {{ $newPaidOrders }} Baru
+    </span>
+</div>
+@endif
 
-    
+
     <div x-show="tab === 'overview'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4">
         <h1 class="text-3xl font-black text-slate-800 italic mb-8 uppercase tracking-tighter">Ringkasan Bisnis 📈</h1>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -23,10 +43,10 @@
         </div>
     </div>
 
-   
+
     <div x-show="tab === 'orders'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4">
         <h1 class="text-3xl font-black text-slate-800 italic mb-8 uppercase tracking-tighter">Pesanan Masuk 🛒</h1>
-        
+
         <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden">
             <table class="w-full text-left">
                 <thead>
@@ -46,21 +66,60 @@
                         </td>
                         <td class="font-bold text-slate-600 text-sm italic">{{ $order->name }}</td>
                         <td>
-                            <span class="px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border 
-    {{ $order->status == 'Pending' ? 'bg-orange-50 text-orange-600 border-orange-100' : 
-       ($order->status == 'Success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
+                            <span class="px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border
+    {{ $order->status == 'Pending' ? 'bg-orange-50 text-orange-600 border-orange-100' :
+       ($order->status == 'Success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
        'bg-red-50 text-red-500 border-red-100') }}">
     {{ $order->status }}
 </span>
                         </td>
-                        <td class="text-center">
-                            @if($order->status === 'Pending')
+                        <td>
+    @if($order->payment_status === 'paid' && $order->status === 'Pending')
+        {{-- Sudah bayar, tunggu konfirmasi mitra --}}
+        <div class="space-y-1">
+            <span class="bg-emerald-50 text-emerald-500 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-100 flex items-center gap-1 w-fit">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse inline-block"></span>
+                Sudah Dibayar
+            </span>
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                Tunggu konfirmasi mitra
+            </p>
+        </div>
+    @elseif($order->status === 'Pending')
+        {{-- Belum bayar --}}
+        <span class="bg-orange-50 text-orange-500 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-orange-100">
+            Belum Bayar
+        </span>
+    @elseif($order->status === 'Success')
+        {{-- Sudah dikonfirmasi --}}
+        <span class="bg-blue-50 text-[#0095FF] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-100">
+            Lunas & Aktif
+        </span>
+    @else
+        <span class="bg-red-50 text-red-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-red-100">
+            Dibatalkan
+        </span>
+    @endif
+</td>
+                        {{-- Kolom Aksi Konfirmasi --}}
+                        <td class="text-center px-6">
+                            @if($order->payment_status === 'paid' && $order->status === 'Pending')
                                 <form action="{{ route('order.confirm', $order->id) }}" method="POST">
                                     @csrf
-                                    <button class="bg-[#0095FF] text-white px-5 py-2 rounded-xl text-[10px] font-black hover:scale-105 transition italic shadow-lg shadow-blue-100">LUNASKAN</button>
+                                    <button type="submit"
+                                            class="bg-emerald-500 text-white px-5 py-2 rounded-xl text-[10px] font-black hover:scale-105 transition italic shadow-lg shadow-emerald-100 uppercase flex items-center gap-2 mx-auto">
+                                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                        Konfirmasi Aktif
+                                    </button>
                                 </form>
+                            @elseif($order->status === 'Pending')
+                                <span class="text-orange-400 font-black text-[10px] uppercase italic">
+                                    Menunggu Bayar
+                                </span>
                             @else
-                                <i data-lucide="check-check" class="w-5 h-5 text-emerald-500 mx-auto"></i>
+                                <div class="flex items-center justify-center gap-2 text-slate-300 font-black text-[10px] uppercase">
+                                    <i data-lucide="check-check" class="w-4 h-4"></i> Selesai
+                                </div>
                             @endif
                         </td>
                     </tr>
@@ -72,13 +131,13 @@
         </div>
     </div>
 
-<div x-show="tab === 'manage'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" 
-     x-data="{ 
-        type: '{{ $service->type }}', 
+<div x-show="tab === 'manage'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4"
+     x-data="{
+        type: '{{ $service->type }}',
         {{-- Mengambil data menu katering jika ada, jika tidak default satu baris kosong --}}
-        menus: {{ json_encode($service->extra_info ?? ['']) }} 
+        menus: {{ json_encode($service->extra_info ?? ['']) }}
      }">
-    
+
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-black text-slate-800 italic uppercase tracking-tighter">Pengaturan Layanan ⚙️</h1>
@@ -86,7 +145,7 @@
         </div>
     </div>
 
-    <form action="{{ route('mitra.update', $service->id) }}" method="POST" enctype="multipart/form-data" 
+    <form action="{{ route('mitra.update', $service->id) }}" method="POST" enctype="multipart/form-data"
           class="bg-white p-12 rounded-[50px] shadow-sm border border-slate-100 space-y-10">
         @csrf
         @method('PUT')
@@ -121,7 +180,7 @@
                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Harga Utama (Rp)</label>
                 <input type="number" name="price" value="{{ $service->price }}" required class="w-full p-5 bg-slate-50 rounded-3xl border-none focus:ring-2 focus:ring-[#0095FF] font-bold text-slate-800 italic text-xl">
             </div>
-            
+
             <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">WhatsApp Bisnis</label>
                 <input type="text" name="whatsapp" value="{{ $service->whatsapp }}" required class="w-full p-5 bg-slate-50 rounded-3xl border-none focus:ring-2 focus:ring-[#0095FF] font-bold text-slate-800 italic">
@@ -174,14 +233,14 @@
                     </select>
                 </div>
             </div>
-            
+
             <div class="space-y-4">
                 <p class="font-black text-slate-700 text-xs uppercase tracking-widest ml-2">Fasilitas Kos:</p>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     @php $currentFeatures = $service->features ?? []; @endphp
                     @foreach(['WiFi', 'AC', 'KM Dalam', 'Parkir', 'Dapur', 'CCTV', 'Lemari', 'Kasur'] as $f)
                     <label class="flex items-center gap-2 font-bold text-slate-600 text-xs cursor-pointer group">
-                        <input type="checkbox" name="features[]" value="{{ $f }}" {{ in_array($f, $currentFeatures) ? 'checked' : '' }} class="rounded text-[#0095FF] focus:ring-[#0095FF]"> 
+                        <input type="checkbox" name="features[]" value="{{ $f }}" {{ in_array($f, $currentFeatures) ? 'checked' : '' }} class="rounded text-[#0095FF] focus:ring-[#0095FF]">
                         <span class="group-hover:text-[#0095FF] transition italic">{{ $f }}</span>
                     </label>
                     @endforeach
@@ -208,7 +267,7 @@
                         @php $currentCateringFeat = $service->features ?? []; @endphp
                         @foreach(['Gratis Ongkir', 'Halal', 'Tanpa MSG', 'Menu Berubah Tiap Hari'] as $ex)
                         <label class="flex items-center gap-2 font-bold text-slate-600 text-xs cursor-pointer group">
-                            <input type="checkbox" name="features[]" value="{{ $ex }}" {{ in_array($ex, $currentCateringFeat) ? 'checked' : '' }} class="rounded text-emerald-500"> 
+                            <input type="checkbox" name="features[]" value="{{ $ex }}" {{ in_array($ex, $currentCateringFeat) ? 'checked' : '' }} class="rounded text-emerald-500">
                             <span class="group-hover:text-emerald-600 transition italic">{{ $ex }}</span>
                         </label>
                         @endforeach
@@ -264,7 +323,7 @@
                     @php $currentLaundryFeat = $service->features ?? []; @endphp
                     @foreach(['Cuci Setrika', 'Cuci Kering', 'Express 4 Jam', 'Cuci Sepatu', 'Bedcover', 'Parfum Premium'] as $l)
                     <label class="flex items-center gap-2 font-bold text-slate-600 text-xs cursor-pointer group">
-                        <input type="checkbox" name="features[]" value="{{ $l }}" {{ in_array($l, $currentLaundryFeat) ? 'checked' : '' }} class="rounded text-indigo-500"> 
+                        <input type="checkbox" name="features[]" value="{{ $l }}" {{ in_array($l, $currentLaundryFeat) ? 'checked' : '' }} class="rounded text-indigo-500">
                         <span class="group-hover:text-indigo-600 transition italic">{{ $l }}</span>
                     </label>
                     @endforeach

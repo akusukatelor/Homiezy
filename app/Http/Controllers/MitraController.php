@@ -12,7 +12,7 @@ class MitraController extends Controller
 {
    public function index()
     {
-        return view('mitra'); 
+        return view('mitra');
     }
 
     // HALAMAN ADMIN PANEL (Method yang dicari Error tadi)
@@ -25,28 +25,34 @@ class MitraController extends Controller
         return redirect()->route('mitra')->with('error', 'Silakan daftar bisnis dulu.');
     }
 
-    // Tentukan nama kolom berdasarkan tipe bisnis mitra
-    $column = ($service->type == 'katering' ? 'catering' : $service->type) . '_id';
+    // Ganti query — pakai service_id bukan kos_id/catering_id/laundry_id
+    $allOrders = Order::where('service_id', $service->id)
+                      ->latest()
+                      ->get();
 
-    // Ambil SEMUA pesanan yang pernah masuk ke mitra ini
-    $allOrders = Order::where($column, $service->id)->latest()->get();
+    // ← Ubah: tampilkan SEMUA order, bukan hanya pending
+    $incomingOrders = $allOrders;
 
-    // Pisahkan mana yang masih pending untuk tabel "Pesanan Masuk"
-    $incomingOrders = $allOrders->where('status', 'Pending');
+    // Hitung notifikasi — order yang baru dibayar (payment_status = paid tapi belum dikonfirmasi mitra)
+    $newPaidOrders = $allOrders->where('payment_status', 'paid')
+                               ->where('status', 'Pending')
+                               ->count();
 
     $stats = [
         'earnings' => (int) $allOrders->where('status', 'Success')->sum('price'),
-        'pending'  => $incomingOrders->count(),
+        'pending'  => $allOrders->where('status', 'Pending')->count(),
         'total'    => $allOrders->count(),
     ];
 
-    return view('mitra.dashboard', compact('service', 'incomingOrders', 'stats'));
+    return view('mitra.dashboard', compact(
+        'service', 'incomingOrders', 'stats', 'newPaidOrders'
+    ));
 }
 
    public function update(Request $request, $id)
 {
     $service = Service::findOrFail($id);
-    
+
     if ($service->user_id !== auth()->id()) {
         abort(403);
     }
@@ -58,7 +64,7 @@ class MitraController extends Controller
         'distance' => 'required|string',
         'whatsapp' => 'required|string', // Tambahkan ini
         'image' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
-        
+
         // Field Opsional (Bisa null tergantung tipe bisnis)
         'gender' => 'nullable|string',
         'subtitle' => 'nullable|string',
@@ -77,7 +83,7 @@ class MitraController extends Controller
             $oldPath = str_replace('/storage/', '', $service->image);
             Storage::disk('public')->delete($oldPath);
         }
-        
+
         $path = $request->file('image')->store('services', 'public');
         $data['image'] = '/storage/' . $path; // Samakan format dengan PartnerController
     }

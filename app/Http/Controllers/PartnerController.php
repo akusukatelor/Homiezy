@@ -38,15 +38,21 @@ class PartnerController extends Controller
             'distance' => $request->distance,
             'subtitle' => $request->subtitle,
             'schedule' => $request->schedule,
-            'features' => $request->features, 
+            'features' => $request->features,
             'extra_info' => $request->extra_info,
             'room_size' => $request->room_size,
             'electricity' => $request->electricity,
-            'water' => $request->water, 
+            'water' => $request->water,
         ]);
 
         $user = auth()->user();
-        $user->update(['role' => 'mitra']);
+        $user->update([
+            'role' => 'mitra',
+            'bank_name'            => $request->bank_name,
+            'bank_account_number'  => $request->bank_account_number,
+            'bank_account_name'    => $request->bank_account_name,
+        ]);
+
 
         return redirect()->route('mitra.dashboard')->with('success', 'Pendaftaran berhasil!');
     }

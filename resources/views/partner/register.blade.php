@@ -7,10 +7,10 @@
 
 <div class="bg-[#F8FAFC] min-h-screen pt-32 pb-20 font-sans " x-data="{ type: 'kos', menus: [''] }">
     <div class="container mx-auto px-6 max-w-4xl">
-        <form action="{{ route('partner.store') }}" method="POST" enctype="multipart/form-data" 
+        <form action="{{ route('partner.store') }}" method="POST" enctype="multipart/form-data"
               class="bg-white p-12 rounded-[50px] shadow-sm border border-slate-100">
             @csrf
-            
+
             <h1 class="text-4xl font-black mb-2 text-slate-800">Daftar Mitra Homiezy</h1>
             <p class="text-slate-400 mb-12 font-bold ">Tingkatkan omset bisnis kos, katering, atau laundry Anda.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
@@ -33,8 +33,8 @@
                     <label class="font-black text-xs uppercase text-slate-400 tracking-widest ml-2">Patokan & Jarak </label>
                     <div class="relative">
                         <i data-lucide="map-pin" class="absolute left-5 top-1/2 -translate-y-1/2 text-[#0095FF] w-5 h-5"></i>
-                        <input type="text" name="distance" required 
-                            placeholder="Contoh: 200 Meter dari Gerbang Depan Unsoed / Belakang GOR Satria" 
+                        <input type="text" name="distance" required
+                            placeholder="Contoh: 200 Meter dari Gerbang Depan Unsoed / Belakang GOR Satria"
                             class="w-full pl-14 pr-6 py-5 bg-slate-50 border-none rounded-3xl focus:ring-2 focus:ring-[#0095FF] font-semibold text-slate-800">
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                     <label class="font-black text-xs uppercase text-slate-400 tracking-widest">Harga Mulai Dari (Rp)</label>
                     <input type="number" name="price" required placeholder="Contoh: 500000" class="w-full p-5 bg-slate-50 rounded-3xl border-none focus:ring-2 focus:ring-[#0095FF]">
                 </div>
-                
+
                 <div class="space-y-2">
                     <label class="font-black text-xs uppercase text-slate-400 tracking-widest">WhatsApp Bisnis</label>
                     <input type="text" name="whatsapp" value="{{ auth()->user()->whatsapp ?? '' }}" required class="w-full p-5 bg-slate-50 rounded-3xl border-none focus:ring-2 focus:ring-[#0095FF]">
@@ -56,6 +56,63 @@
             </div>
 
             <hr class="mb-10 border-slate-100">
+            {{-- INFORMASI REKENING BANK --}}
+<div class="p-8 bg-amber-50/50 rounded-[40px] space-y-6 mb-10 border border-amber-100">
+    <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-amber-100 rounded-2xl flex items-center justify-center">
+            <i data-lucide="landmark" class="w-5 h-5 text-amber-500"></i>
+        </div>
+        <div>
+            <h3 class="font-black text-slate-800">Informasi Rekening Bank</h3>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Untuk pencairan dana pembayaran</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="space-y-2">
+            <label class="font-black text-[10px] uppercase text-amber-500 tracking-widest ml-2">Nama Bank</label>
+            <select name="bank_name" required class="w-full p-4 rounded-2xl border-none shadow-sm text-slate-600 font-bold focus:ring-2 focus:ring-amber-400">
+                <option value="">-- Pilih Bank --</option>
+                <option value="BCA">BCA</option>
+                <option value="BNI">BNI</option>
+                <option value="BRI">BRI</option>
+                <option value="Mandiri">Mandiri</option>
+                <option value="BSI">BSI</option>
+                <option value="CIMB Niaga">CIMB Niaga</option>
+                <option value="Danamon">Danamon</option>
+                <option value="Permata">Permata</option>
+                <option value="BTN">BTN</option>
+                <option value="Jenius">Jenius (BTPN)</option>
+                <option value="SeaBank">SeaBank</option>
+                <option value="GoPay">GoPay</option>
+                <option value="OVO">OVO</option>
+                <option value="Dana">Dana</option>
+            </select>
+        </div>
+
+        <div class="space-y-2">
+            <label class="font-black text-[10px] uppercase text-amber-500 tracking-widest ml-2">Nomor Rekening</label>
+            <input type="text" name="bank_account_number" required
+                   placeholder="Contoh: 1234567890"
+                   class="w-full p-4 rounded-2xl border-none shadow-sm font-bold focus:ring-2 focus:ring-amber-400">
+        </div>
+
+        <div class="space-y-2">
+            <label class="font-black text-[10px] uppercase text-amber-500 tracking-widest ml-2">Nama Pemilik Rekening</label>
+            <input type="text" name="bank_account_name" required
+                   placeholder="Sesuai buku tabungan"
+                   class="w-full p-4 rounded-2xl border-none shadow-sm font-bold focus:ring-2 focus:ring-amber-400"
+                   value="{{ auth()->user()->name }}">
+        </div>
+    </div>
+
+    <div class="flex items-center gap-3 p-4 bg-amber-100/50 rounded-2xl">
+        <i data-lucide="shield-check" class="w-5 h-5 text-amber-500 flex-shrink-0"></i>
+        <p class="text-[10px] font-bold text-amber-700 italic">
+            Data rekening hanya digunakan untuk pencairan dana dan tidak akan dibagikan ke pihak ketiga.
+        </p>
+    </div>
+</div>
            {{-- FIELDS KHUSUS KOS --}}
     <div x-show="type === 'kos'" x-transition x-cloak class="p-8 bg-blue-50/50 rounded-[40px] space-y-6 mb-10 border border-blue-100">
         {{-- Baris 1: Gender & Ukuran Kamar --}}
@@ -98,7 +155,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             @foreach(['WiFi', 'AC', 'KM Dalam', 'Parkir', 'Dapur', 'CCTV', 'Lemari', 'Kasur'] as $f)
             <label class="flex items-center gap-2 font-bold text-slate-600 text-xs cursor-pointer group">
-                <input type="checkbox" name="features[]" value="{{ $f }}" class="rounded text-[#0095FF] focus:ring-[#0095FF]"> 
+                <input type="checkbox" name="features[]" value="{{ $f }}" class="rounded text-[#0095FF] focus:ring-[#0095FF]">
                 <span class="group-hover:text-[#0095FF] transition">{{ $f }}</span>
             </label>
             @endforeach
@@ -123,7 +180,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             @foreach(['Gratis Ongkir', 'Halal', 'Tanpa MSG', 'Menu Berubah Tiap Hari'] as $ex)
                             <label class="flex items-center gap-2 font-bold text-slate-600 text-xs cursor-pointer group">
-                                <input type="checkbox" name="features[]" value="{{ $ex }}" class="rounded text-emerald-500"> 
+                                <input type="checkbox" name="features[]" value="{{ $ex }}" class="rounded text-emerald-500">
                                 <span class="group-hover:text-emerald-600 transition">{{ $ex }}</span>
                             </label>
                             @endforeach
@@ -175,7 +232,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                         @foreach(['Cuci Setrika', 'Cuci Kering', 'Express 4 Jam', 'Cuci Sepatu', 'Bedcover', 'Parfum Premium'] as $l)
                         <label class="flex items-center gap-2 font-bold text-slate-600 text-[11px] cursor-pointer group">
-                            <input type="checkbox" name="features[]" value="{{ $l }}" class="rounded text-indigo-500"> 
+                            <input type="checkbox" name="features[]" value="{{ $l }}" class="rounded text-indigo-500">
                             <span class="group-hover:text-indigo-600 transition">{{ $l }}</span>
                         </label>
                         @endforeach

@@ -11,6 +11,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\XenditController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 
@@ -76,6 +77,9 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/order/cancel/{id}', [OrderController::class, 'cancel'])->name('order.cancel');
     Route::get('/order/edit-item/{id}/{category}', [OrderController::class, 'editItem'])->name('order.edit_item');
     Route::put('/order/update-item/{id}', [OrderController::class, 'updateItem'])->name('order.update_item');
+
+    // REVIEW
+     Route::post('/review', [ReviewController::class, 'store'])->name('review.store');
 
     // Fitur Mitra
     Route::get('/jadi-mitra/register', [PartnerController::class, 'create'])->name('partner.register');
