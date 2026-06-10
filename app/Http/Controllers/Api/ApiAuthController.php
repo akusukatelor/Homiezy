@@ -81,57 +81,68 @@ class ApiAuthController extends Controller
 
     // Google Sign-In — Flutter kirim idToken Google, Laravel verifikasi
     public function googleLogin(Request $request)
-    {
-        $request->validate([
-            'id_token' => 'required|string',
+{
+    $request->validate([
+        'id_token' => 'required|string',
+    ]);
+
+    try {
+        $idToken = $request->id_token;
+
+        // Debug log (boleh dihapus setelah beres)
+        \Log::info('Google ID Token received', [
+            'token_length' => strlen($idToken),
+            'is_jwt'       => substr_count($idToken, '.') === 2 ? 'yes' : 'NO - bukan idToken!',
+            'first_chars'  => substr($idToken, 0, 30),
         ]);
+        \Log::info('Client ID used', ['client_id' => env('GOOGLE_CLIENT_ID')]);
 
-        try {
-            // Verifikasi token Google
-            $client = new GoogleClient(['client_id' => env('GOOGLE_CLIENT_ID')]);
-            $payload = $client->verifyIdToken($request->id_token);
+        // Verifikasi — cukup sekali
+        $client = new GoogleClient(['client_id' => env('GOOGLE_CLIENT_ID')]);
+        $payload = $client->verifyIdToken($idToken);
 
-            if (!$payload) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Token Google tidak valid.',
-                ], 401);
-            }
+        \Log::info('Payload result', ['payload' => $payload]);
 
-            // Cari atau buat user
-            $user = User::firstOrCreate(
-                ['email' => $payload['email']],
-                [
-                    'name'      => $payload['name'],
-                    'google_id' => $payload['sub'],
-                    'password'  => Hash::make(\Str::random(16)),
-                    'role'      => 'customer',
-                ]
-            );
-
-            $token = $user->createToken('mobile-app')->plainTextToken;
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Login Google berhasil.',
-                'token'   => $token,
-                'user'    => [
-                    'id'        => $user->id,
-                    'name'      => $user->name,
-                    'email'     => $user->email,
-                    'phone'     => $user->whatsapp,
-                    'role'      => $user->role,
-                    'photo_url' => $payload['picture'] ?? null,
-                ],
-            ]);
-
-        } catch (\Exception $e) {
+        if (!$payload) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal verifikasi token Google: ' . $e->getMessage(),
-            ], 500);
+                'message' => 'Token Google tidak valid.',
+            ], 401);
         }
+
+        $user = User::firstOrCreate(
+            ['email' => $payload['email']],
+            [
+                'name'      => $payload['name'],
+                'google_id' => $payload['sub'],
+                'password'  => Hash::make(\Str::random(16)),
+                'role'      => 'customer',
+            ]
+        );
+
+        $token = $user->createToken('mobile-app')->plainTextToken;
+
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Login Google berhasil.',
+            'token'     => $token,
+            'user'      => [
+                'id'        => $user->id,
+                'name'      => $user->name,
+                'email'     => $user->email,
+                'phone'     => $user->whatsapp,
+                'role'      => $user->role,
+                'photo_url' => $payload['picture'] ?? null,
+            ],
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal verifikasi token Google: ' . $e->getMessage(),
+        ], 500);
     }
+}
 
     // Logout
     public function logout(Request $request)
