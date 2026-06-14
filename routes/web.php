@@ -81,6 +81,10 @@ Route::middleware(['auth', 'superadmin'])->prefix('superadmin')->name('superadmi
     // Manajemen user
     Route::get('/users', [SuperAdminController::class, 'users'])->name('users');
     Route::delete('/users/{id}', [SuperAdminController::class, 'destroyUser'])->name('users.destroy');
+
+    Route::get('/paket/create',       [SuperAdminController::class, 'createPaket'])->name('paket.create');
+    Route::post('/paket',             [SuperAdminController::class, 'storePaket'])->name('paket.store');
+    Route::delete('/paket/{id}',      [SuperAdminController::class, 'destroyPaket'])->name('paket.destroy');
 });
 
 Route::post('/xendit/webhook', [XenditController::class, 'webhook'])

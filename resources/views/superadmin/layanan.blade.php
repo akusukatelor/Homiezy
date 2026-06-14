@@ -11,15 +11,26 @@
                 Kelola
                 @if($type === 'kos') 🏠 Kos
                 @elseif($type === 'katering') 🍱 Catering
+                @elseif($type === 'paket') 📦 Paket
                 @else 👕 Laundry
                 @endif
             </h1>
             <p class="text-slate-400 font-bold mt-1">{{ $layanan->total() }} listing terdaftar</p>
         </div>
-        <a href="{{ route('superadmin.dashboard') }}"
-           class="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-700 transition italic">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali
-        </a>
+        <div class="flex items-center gap-3">
+    @if($type === 'paket')
+    <a href="{{ route('superadmin.paket.create') }}"
+       class="flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-[20px]
+              font-black text-[10px] uppercase tracking-widest hover:bg-orange-600 transition italic">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Tambah Paket
+    </a>
+    @endif
+    <a href="{{ route('superadmin.dashboard') }}"
+       class="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-700 transition italic">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali
+    </a>
+</div>
     </div>
 
     {{-- Flash Message --}}
@@ -32,7 +43,7 @@
 
     {{-- Filter Tabs --}}
     <div class="flex gap-3">
-        @foreach(['kos' => '🏠 Kos', 'katering' => '🍱 Catering', 'laundry' => '👕 Laundry'] as $key => $label)
+        @foreach(['kos' => '🏠 Kos', 'katering' => '🍱 Catering', 'laundry' => '👕 Laundry', 'paket' => '📦 Paket'] as $key => $label)
         <a href="{{ route('superadmin.layanan', ['type' => $key, 'search' => $search]) }}"
            class="px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition
            {{ $type === $key
