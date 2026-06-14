@@ -32,56 +32,73 @@ class ApiOrderController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'service_id'   => 'required|exists:services,id',
-            'tanggal_mulai' => 'required|date',
-            'durasi_bulan' => 'required|integer|min:1|max:12',
-            'alamat'       => 'required|string',
-            'catatan'      => 'nullable|string',
-        ]);
+{
+    $request->validate([
+        'service_id'    => 'nullable|string', // ← ubah jadi nullable
+        'tanggal_mulai' => 'required|date',
+        'durasi_bulan'  => 'required|integer|min:1|max:12',
+        'alamat'        => 'nullable|string', // ← ubah jadi nullable
+        'catatan'       => 'nullable|string',
+        'tipe'          => 'nullable|string', // ← tambah ini
+        'kos_id'        => 'nullable|exists:services,id', // ← tambah ini
+    ]);
 
-        $service = Service::findOrFail($request->service_id);
-        $total   = $service->price * $request->durasi_bulan;
+    // Tentukan service_id yang valid
+    $serviceId = $request->service_id;
 
-        $order = Order::create([
-            'order_number'   => 'ORD-' . strtoupper(Str::random(8)),
-            'user_id'        => $request->user()->id,
-            'service_id'     => $service->id,
-            'name'           => $service->name . ' (Mobile)',
-            'price'          => $total,
-            'status'         => 'Pending',
-            'type'           => $service->type,
-            'payment_status' => 'pending',
-            'kos_price'      => $service->type == 'kos' ? $total : 0,
-            'catering_price' => $service->type == 'katering' ? $total : 0,
-            'laundry_price'  => $service->type == 'laundry' ? $total : 0,
-        ]);
-
-        // Buat Xendit Invoice
-        try {
-            $invoice = $this->xenditService->createInvoice([
-                'external_id' => 'HOMIEZY-ORDER-' . $order->id . '-' . time(),
-                'amount'      => $order->price,
-                'email'       => $request->user()->email,
-                'description' => 'Pembayaran Order Homiezy #' . $order->id,
-            ]);
-
-            $order->update([
-                'xendit_invoice_id'  => $invoice['invoice_id'],
-                'xendit_invoice_url' => $invoice['invoice_url'],
-            ]);
-
-        } catch (\Exception $e) {
-            // Invoice gagal dibuat, tapi order tetap tersimpan
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Order berhasil dibuat.',
-            'data'    => $this->formatOrder($order->fresh()),
-        ], 201);
+    // Kalau service_id bukan angka (berarti ID paket), pakai kos_id
+    if (!is_numeric($serviceId)) {
+        $serviceId = $request->kos_id;
     }
+
+    if (!$serviceId) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Service tidak ditemukan.',
+        ], 422);
+    }
+
+    $service = Service::findOrFail($serviceId);
+    $total   = (float) $request->total_harga ?? ($service->price * $request->durasi_bulan);
+
+    $order = Order::create([
+        'order_number'   => 'ORD-' . strtoupper(Str::random(8)),
+        'user_id'        => $request->user()->id,
+        'service_id'     => $service->id,
+        'name'           => $service->name . ' (' . ($request->tipe ?? 'Mobile') . ')',
+        'price'          => $total,
+        'status'         => 'Pending',
+        'type'           => $request->tipe ?? $service->type,
+        'payment_status' => 'pending',
+        'kos_price'      => $service->type == 'kos' ? $total : 0,
+        'catering_price' => $service->type == 'katering' ? $total : 0,
+        'laundry_price'  => $service->type == 'laundry' ? $total : 0,
+    ]);
+
+    // Buat Xendit Invoice
+    try {
+        $invoice = $this->xenditService->createInvoice([
+            'external_id' => 'HOMIEZY-ORDER-' . $order->id . '-' . time(),
+            'amount'      => (int) $order->price,
+            'email'       => $request->user()->email,
+            'description' => 'Pembayaran Order Homiezy #' . $order->id,
+        ]);
+
+        $order->update([
+            'xendit_invoice_id'  => $invoice['invoice_id'],
+            'xendit_invoice_url' => $invoice['invoice_url'],
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Xendit invoice error: ' . $e->getMessage());
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Order berhasil dibuat.',
+        'data'    => $this->formatOrder($order->fresh()),
+    ], 201);
+}
 
     public function show(Request $request, $id)
     {
