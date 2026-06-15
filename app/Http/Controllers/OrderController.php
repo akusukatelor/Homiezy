@@ -28,6 +28,7 @@ class OrderController extends Controller
    public function store(Request $request)
 {
     try {
+        \Log::info('Store request data:', $request->all());
         $user = auth()->user();
         $masterOrderNumber = 'BNDL-' . strtoupper(Str::random(8));
 
