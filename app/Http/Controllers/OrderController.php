@@ -80,7 +80,7 @@ class OrderController extends Controller
         return response()->json(['success' => true, 'message' => 'Pesanan berhasil diteruskan ke semua mitra!']);
 
     } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        return response()->json(['success' => false, 'message' => $e->getMessage() . ' at line ' . $e->getLine()], 500);
     }
 }
 
