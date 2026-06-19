@@ -91,18 +91,18 @@ Route::post('/xendit/webhook', [XenditController::class, 'webhook'])
     ->name('xendit.webhook')
     ->withoutMiddleware([VerifyCsrfToken::class]);
 
-
-// --- AUTHENTICATED ROUTES (Wajib Login) ---
-Route::middleware(['auth'])->group(function () {
-    Route::get('/payment/create/{orderId}', [XenditController::class, 'createInvoice'])
-        ->name('xendit.create');
     Route::get('/payment/success', [XenditController::class, 'success'])
         ->name('xendit.success');
-    Route::get('/payment/failure', [XenditController::class, 'failure'])
-        ->name('xendit.failure');
-
+    
+    // --- AUTHENTICATED ROUTES (Wajib Login) ---
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/dashboard-saya', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/payment/create/{orderId}', [XenditController::class, 'createInvoice'])
+            ->name('xendit.create');
+        Route::get('/payment/failure', [XenditController::class, 'failure'])
+            ->name('xendit.failure');
+        
     // User Dashboard & Profil
-    Route::get('/dashboard-saya', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/lengkapi-profil', function() { return view('auth.complete-profile'); })->name('complete.profile');
     Route::post('/lengkapi-profil', [AuthController::class, 'updateProfile']);
 

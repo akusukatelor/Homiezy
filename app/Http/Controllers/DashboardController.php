@@ -11,7 +11,7 @@ class DashboardController extends Controller
    public function index()
 {
     $user = auth()->user();
-    $user_id = $user->id;
+        $user_id = $user->id;
 
    $packageSettings = [
         'premium'        => ['kos', 'katering', 'laundry'],

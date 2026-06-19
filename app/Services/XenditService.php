@@ -28,8 +28,8 @@ class XenditService
         'description'       => $data['description'],
         'currency'          => 'IDR',
         'invoice_duration'  => 86400,
-        'success_redirect_url' => 'homiezy://payment/success',
-        'failure_redirect_url' => 'homiezy://payment/failure',
+        'success_redirect_url' => 'http://localhost:8000/dashboard-saya',
+'failure_redirect_url' => 'http://localhost:8000/payment/failure',
         'payment_methods'   => ['QRIS', 'BCA', 'BNI', 'BRI', 'MANDIRI', 'OVO', 'DANA', 'GOPAY'],
     ]);
 

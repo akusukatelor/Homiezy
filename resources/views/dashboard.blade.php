@@ -7,7 +7,7 @@
         {{-- Header Dashboard --}}
         <div class="mb-12">
             <h1 class="text-4xl font-bold text-slate-900 mb-2">Dashboard Saya</h1>
-            <p class="text-slate-500 font-medium italic">Kelola pengeluaran dan pantau semua transaksimu di SIMAMAT</p>
+            <p class="text-slate-500 font-medium italic">Kelola pengeluaran dan pantau semua transaksimu di Homiezy</p>
         </div>
 
         {{-- Statistik Cards --}}
